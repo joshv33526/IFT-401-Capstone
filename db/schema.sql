@@ -1,5 +1,7 @@
 -- Easy Stock Solutions: database schema
 
+-- IMPORTANT FOR US: DO NOT RERUN ON RDS, AS IT WIPES ALL SHARED DATA --
+
 CREATE DATABASE IF NOT EXISTS easystock
   CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE easystock;
