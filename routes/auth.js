@@ -1,8 +1,4 @@
 // /api/auth  -  login, logout, and "who am I"
-// Registration (POST /register) is Jake's "create user account" function.
-// It must insert the users row AND its cash_accounts row inside one
-// withTransaction() call, hash with bcrypt.hash(password, 12), and use
-// the same validate middleware pattern shown below.
 const express = require("express");
 const bcrypt = require("bcrypt");
 const { body } = require("express-validator");
