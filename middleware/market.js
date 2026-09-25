@@ -1,6 +1,5 @@
 // Decides whether trading is allowed right now, using the market_schedule
 // and market_holidays tables that the admin pages maintain.
-//
 // EC2 and RDS clocks run in UTC, so "now" is converted to MARKET_TZ first.
 // Without this, 9:30 AM market open would actually mean 9:30 AM UTC.
 const { pool } = require("../db");
@@ -47,7 +46,6 @@ async function getMarketStatus() {
     return { open: false, reason: "Market is closed today", now, timezone: MARKET_TZ };
   }
 
-  // TIME columns come back as "HH:MM:SS" strings, which compare correctly as text.
   const open = now.time >= day.open_time && now.time < day.close_time;
   return {
     open,
@@ -60,8 +58,7 @@ async function getMarketStatus() {
 }
 
 async function requireMarketOpen(req, res, next) {
-  // Dev/testing override so you can test trades at night or on weekends.
-  // Never set this on the EC2 production .env.
+  // Dev/testing override so we can test trades at night or on weekends.
   if (process.env.MARKET_ALWAYS_OPEN === "true" && process.env.NODE_ENV !== "production") {
     return next();
   }
