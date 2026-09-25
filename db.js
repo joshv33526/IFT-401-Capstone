@@ -9,14 +9,10 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  // DECIMAL columns come back as strings (e.g. "185.24") so money is never
-  // silently turned into an imprecise float. Convert with lib/money.js.
+ 
   decimalNumbers: false,
 });
 
-// Runs `work(conn)` inside one database transaction.
-// If anything throws, every write inside is rolled back, so a buy can never
-// take the cash without also recording the shares (or vice versa).
 async function withTransaction(work) {
   const conn = await pool.getConnection();
   try {
