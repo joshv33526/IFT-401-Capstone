@@ -1,25 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Easy Stock Solutions</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
     <h1>Easy Stock Solutions</h1>
     <h2>Login</h2>
 
-    <form>
-        <label for="username">Username</label>
-        <input type="text" id="username">
-
-        <label for="password">Password</label>
-        <input type="password" id="password">
-
-        <button type="submit">Login</button>
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input type="text" id="username" required autocomplete="username" />
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        required
+        autocomplete="current-password"
+      />
+      <button type="submit">Login</button>
     </form>
 
-</body>
+    <p id="loginMessage" role="alert"></p>
+
+    <script src="js/login.js"></script>
+  </body>
 </html>
