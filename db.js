@@ -1,4 +1,5 @@
-// Single shared MySQL connection pool. Every route imports from here.
+// Single shared MySQL connection pool.
+const fs = require("fs");
 const mysql = require("mysql2/promise");
 
 const pool = mysql.createPool({
@@ -9,8 +10,12 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
- 
+
   decimalNumbers: false,
+
+  ssl: process.env.DB_SSL_CA
+    ? { ca: fs.readFileSync(process.env.DB_SSL_CA), rejectUnauthorized: true }
+    : undefined,
 });
 
 async function withTransaction(work) {
