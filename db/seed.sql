@@ -1,4 +1,4 @@
--- Easy Stock Solutions: starter data for development and demos.
+-- Test
 USE easystock;
 
 -- Mon-Fri open 9:30-16:00, weekends closed (admin can change later)
