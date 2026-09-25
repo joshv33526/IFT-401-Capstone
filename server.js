@@ -15,7 +15,7 @@ if (!process.env.SESSION_SECRET) {
 // this lets Express see the request as secure so the cookie is sent.
 if (isProd) app.set("trust proxy", 1);
 
-app.disable("x-powered-by"); // don't advertise the framework
+app.disable("x-powered-by");
 app.use(express.json({ limit: "10kb" }));
 
 app.use(
@@ -25,10 +25,10 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true, // JavaScript in the page can't read the cookie (XSS)
+      httpOnly: true,
       sameSite: "lax", // blocks most cross-site request forgery
       secure: isProd, // HTTPS-only in production
-      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+      maxAge: 2 * 60 * 60 * 1000,
     },
   }),
 );
@@ -50,9 +50,9 @@ app.use("/api/market", require("./routes/market"));
 // Unknown /api/... path
 app.use("/api", (req, res) => res.status(404).json({ error: "Not found" }));
 
-// Central error handler. Express 5 sends thrown/rejected errors from async
-// routes here automatically. Internal details (SQL errors, stack traces)
-// are logged on the server and never sent to the browser.
+// Error handler. Express 5 sends thrown/rejected errors from async
+// routes here automatically. Internal details are logged
+// on the server and never sent to the browser.
 app.use((err, req, res, next) => {
   if (!err.expose) console.error(err);
   res.status(err.status || 500).json({ error: err.expose ? err.message : "Internal server error" });
