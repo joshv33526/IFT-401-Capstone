@@ -1,10 +1,4 @@
 -- Easy Stock Solutions: database schema
--- Matches the ERD in the SAD: User, Cash_Account, Cash_Transaction, Order,
--- Holding, Stock, Transaction, Stock_Price, Market_Schedule, Market_Holiday.
--- Target: MySQL 8.0.19+ (local dev and AWS RDS).
---
--- WARNING: this drops and recreates every table. Only run it on a dev
--- database or when you intentionally want a clean reset.
 
 CREATE DATABASE IF NOT EXISTS easystock
   CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -48,7 +42,7 @@ CREATE TABLE stocks (
   CONSTRAINT chk_stock_prices_pos CHECK (initial_price > 0 AND current_price > 0)
 );
 
--- STOCK_PRICE (price history written by the random price generator) --------
+-- STOCK_PRICE --------
 CREATE TABLE stock_prices (
   price_id     BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   stock_id     INT UNSIGNED NOT NULL,
@@ -59,7 +53,7 @@ CREATE TABLE stock_prices (
     REFERENCES stocks(stock_id) ON DELETE CASCADE
 );
 
--- ORDER (what the customer asked for) --------------------------------------
+-- ORDER --------------------------------------
 CREATE TABLE orders (
   order_id    BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   user_id     INT UNSIGNED NOT NULL,
@@ -91,7 +85,7 @@ CREATE TABLE transactions (
   CONSTRAINT fk_txn_stock FOREIGN KEY (stock_id) REFERENCES stocks(stock_id)
 );
 
--- CASH_TRANSACTION (every change to a cash balance, incl. buys/sells) -------
+-- CASH_TRANSACTION (every change to a cash balance, e.g. buys/sells) -------
 CREATE TABLE cash_transactions (
   cash_txn_id      BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   cash_account_id  INT UNSIGNED NOT NULL,
