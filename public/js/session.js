@@ -10,7 +10,7 @@
     }
     const user = await res.json();
     const welcome = document.querySelector(".welcome-message");
-    if (welcome) welcome.textContent = "Welcome, ${user.fullName}";
+    if (welcome) welcome.textContent = `Welcome, ${user.fullName}`;
   } catch {
     window.location.href = "login.html";
   }
@@ -21,5 +21,6 @@ if (logoutButton) {
   logoutButton.addEventListener("click", async (e) => {
     e.preventDefault();
     await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+    window.location.href = "login.html";
   });
 }
