@@ -1,4 +1,4 @@
-// DEV ONLY: creates a test user + cash account so you can test login,
+// DEV ONLY: creates a test user + cash account to test login,
 // deposits, and trades before the register page/route is finished.
 //
 // Usage:
