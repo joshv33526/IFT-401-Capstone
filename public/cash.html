@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cash | Easy Stock Solutions</title>
+
+    <!-- Shared website styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Cash page styles -->
+    <link rel="stylesheet" href="cash.css">
+</head>
+
+<body>
+
+    <!-- Top Navigation -->
+    <header class="site-header">
+        <div class="navbar">
+
+            <a class="brand" href="dashboard.html">
+                Easy Stock Solutions
+            </a>
+
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li>
+                        <a href="dashboard.html">Dashboard</a>
+                    </li>
+
+                    <li>
+                        <a href="trade.html">Trade</a>
+                    </li>
+
+                    <li>
+                        <a href="portfolio.html" aria-current="page">
+                            Portfolio
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="transactions.html">History</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="user-area">
+                <p class="welcome-message">
+                    Welcome, Josh
+                </p>
+
+                <a class="logout-button" href="login.html">
+                    Log Out
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Cash Heading -->
+        <section class="cash-header">
+
+            <div>
+                <h1 class="page-title">
+                    Cash Management
+                </h1>
+
+                <p class="page-description">
+                    View and manage the cash available in your investment account.
+                </p>
+            </div>
+
+
+            <!-- Cash Balance -->
+            <div class="cash-balance">
+
+                <p class="summary-label">
+                    Available Cash
+                </p>
+
+                <p class="summary-value">
+                    $2,115.00
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Back to Portfolio -->
+        <section class="cash-navigation">
+
+            <a class="back-button" href="portfolio.html">
+                ← Back to Portfolio
+            </a>
+
+        </section>
+
+
+        <!-- Cash Summary -->
+        <section class="cash-card">
+
+            <h2>Cash Summary</h2>
+
+            <div class="cash-summary-row">
+                <span>Available Cash</span>
+                <strong>$2,115.00</strong>
+            </div>
+
+            <div class="cash-summary-row">
+                <span>Buying Power</span>
+                <strong>$2,115.00</strong>
+            </div>
+
+            <div class="cash-summary-row">
+                <span>Pending Transactions</span>
+                <strong>$0.00</strong>
+            </div>
+
+        </section>
+
+
+        <!-- Deposit and Withdraw Section -->
+        <section class="cash-actions">
+
+
+            <!-- Fun Money Pile -->
+            <div class="money-area">
+
+                <div class="money-stack" aria-hidden="true">
+
+                    <div class="money-bill bill-three">
+                        $
+                    </div>
+
+                    <div class="money-bill bill-two">
+                        $
+                    </div>
+
+                    <div class="money-bill bill-one">
+                        $
+                    </div>
+
+                </div>
+
+                <p>Your Cash</p>
+
+            </div>
+
+
+            <!-- Deposit Cash -->
+            <div class="cash-card action-card">
+
+                <h2>Deposit Cash</h2>
+
+                <p>
+                    Add money to your Easy Stock Solutions account.
+                </p>
+
+                <form id="depositForm">
+
+                    <div class="form-group">
+
+                        <label for="depositAmount">
+                            Deposit Amount
+                        </label>
+
+                        <input
+                            type="number"
+                            id="depositAmount"
+                            name="depositAmount"
+                            min="1"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            required
+                        >
+
+                    </div>
+
+                    <button
+                        class="deposit-button"
+                        type="submit"
+                    >
+                        Deposit Cash
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- Withdraw Cash -->
+            <div class="cash-card action-card">
+
+                <h2>Withdraw Cash</h2>
+
+                <p>
+                    Withdraw available cash from your investment account.
+                </p>
+
+                <form id="withdrawForm">
+
+                    <div class="form-group">
+
+                        <label for="withdrawAmount">
+                            Withdrawal Amount
+                        </label>
+
+                        <input
+                            type="number"
+                            id="withdrawAmount"
+                            name="withdrawAmount"
+                            min="1"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            required
+                        >
+
+                    </div>
+
+                    <button
+                        class="withdraw-button"
+                        type="submit"
+                    >
+                        Withdraw Cash
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- Other Navigation -->
+        <section class="cash-page-actions">
+
+            <a class="secondary-button" href="portfolio.html">
+                Back to Portfolio
+            </a>
+
+            <a class="secondary-button" href="trade.html">
+                Trade Stocks
+            </a>
+
+            <a class="secondary-button" href="transactions.html">
+                View History
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="site-footer">
+
+        <div class="footer-links">
+
+            <a href="#">About</a>
+            <a href="#">Help</a>
+            <a href="#">Contact</a>
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+
+        </div>
+
+        <p>
+            Easy Stock Solutions
+        </p>
+
+    </footer>
+
+</body>
+</html>

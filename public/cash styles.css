@@ -1,0 +1,382 @@
+/* ==========================================
+   Easy Stock Solutions - Cash Page
+   ========================================== */
+
+
+/* Cash page heading */
+
+.cash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+
+/* Current cash balance */
+
+.cash-balance {
+    min-width: 200px;
+    text-align: center;
+}
+
+
+/* Back to Portfolio */
+
+.cash-navigation {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.back-button {
+    color: var(--nav-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.back-button:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================
+   Cash Cards
+   ========================================== */
+
+.cash-card {
+    margin-top: 24px;
+    padding: 28px;
+
+    border: 1px solid var(--border-color);
+
+    background: white;
+}
+
+.cash-card h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.cash-card p {
+    color: var(--muted-color);
+}
+
+
+/* Action cards do not need extra top spacing */
+
+.action-card {
+    margin-top: 0;
+}
+
+
+/* ==========================================
+   Cash Summary
+   ========================================== */
+
+.cash-summary-row {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cash-summary-row:last-child {
+    border-bottom: none;
+}
+
+
+/* ==========================================
+   Deposit / Withdraw Area
+   ========================================== */
+
+.cash-actions {
+    display: grid;
+
+    grid-template-columns: 180px 1fr 1fr;
+
+    align-items: stretch;
+
+    gap: 24px;
+
+    margin-top: 30px;
+}
+
+
+/* ==========================================
+   Fun Money Pile
+   ========================================== */
+
+.money-area {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    border: 1px solid var(--border-color);
+
+    background: #f8fff9;
+}
+
+.money-area p {
+    margin-top: 22px;
+    margin-bottom: 0;
+
+    color: var(--muted-color);
+
+    font-weight: 600;
+}
+
+
+/* Money stack container */
+
+.money-stack {
+    position: relative;
+
+    width: 110px;
+    height: 75px;
+}
+
+
+/* Individual dollar bills */
+
+.money-bill {
+    position: absolute;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 90px;
+    height: 46px;
+
+    border: 2px solid #16823b;
+
+    background: #55b86a;
+
+    color: white;
+
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+/* Bottom bill */
+
+.bill-three {
+    top: 24px;
+    left: 0;
+
+    transform: rotate(-8deg);
+}
+
+
+/* Middle bill */
+
+.bill-two {
+    top: 12px;
+    left: 10px;
+
+    transform: rotate(5deg);
+}
+
+
+/* Top bill */
+
+.bill-one {
+    top: 0;
+    left: 18px;
+}
+
+
+/* ==========================================
+   Form Inputs
+   ========================================== */
+
+.cash-card input {
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #a3a5b0;
+
+    background: white;
+
+    color: var(--text-color);
+}
+
+
+/* ==========================================
+   Deposit Button
+   ========================================== */
+
+.deposit-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+
+    padding: 10px 24px;
+
+    border: 0;
+
+    background: #16823b;
+
+    color: white;
+
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+.deposit-button:hover {
+    background: #116a30;
+}
+
+
+/* ==========================================
+   Withdraw Button
+   ========================================== */
+
+.withdraw-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+
+    padding: 10px 24px;
+
+    border: 0;
+
+    background: #d5263b;
+
+    color: white;
+
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+.withdraw-button:hover {
+    background: #b51f31;
+}
+
+
+/* ==========================================
+   Bottom Navigation Buttons
+   ========================================== */
+
+.cash-page-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 30px;
+}
+
+
+.secondary-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+
+    padding: 10px 24px;
+
+    border: 2px solid var(--nav-color);
+
+    background: white;
+
+    color: var(--nav-color);
+
+    font-weight: 500;
+
+    text-decoration: none;
+}
+
+.secondary-button:hover {
+    background: #f2f2ff;
+}
+
+
+/* ==========================================
+   Tablet Layout
+   ========================================== */
+
+@media (max-width: 900px) {
+
+    .cash-header {
+        flex-direction: column;
+    }
+
+    .cash-balance {
+        text-align: left;
+    }
+
+
+    .cash-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+
+    .money-area {
+        grid-column: 1 / -1;
+
+        min-height: 150px;
+    }
+
+}
+
+
+/* ==========================================
+   Mobile Layout
+   ========================================== */
+
+@media (max-width: 650px) {
+
+    .cash-actions {
+        grid-template-columns: 1fr;
+    }
+
+
+    .money-area {
+        grid-column: auto;
+    }
+
+
+    .deposit-button,
+    .withdraw-button {
+        width: 100%;
+    }
+
+
+    .cash-page-actions {
+        flex-direction: column;
+    }
+
+
+    .cash-page-actions a {
+        width: 100%;
+    }
+
+
+    .cash-summary-row {
+        gap: 20px;
+    }
+
+}

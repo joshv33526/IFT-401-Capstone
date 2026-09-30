@@ -1,0 +1,245 @@
+/* ==========================================
+   Easy Stock Solutions
+   Portfolio Page
+   ========================================== */
+
+
+/* Portfolio Header */
+
+.portfolio-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 40px;
+}
+
+
+/* Portfolio Statistics */
+
+.portfolio-stats {
+    display: flex;
+
+    gap: 32px;
+}
+
+
+.stat-box {
+    min-width: 150px;
+
+    text-align: center;
+}
+
+
+
+/* ==========================================
+   CASH MANAGEMENT BOX
+   ========================================== */
+
+.cash-access {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 30px;
+
+    margin-top: 40px;
+
+    padding: 24px;
+
+    border: 2px solid #16823b;
+
+    background: #f5fff7;
+}
+
+
+.cash-access-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+
+.cash-access h2 {
+    margin: 0 0 4px 0;
+}
+
+
+.cash-access p {
+    margin: 0;
+
+    color: var(--muted-color);
+}
+
+
+
+/* Dollar Symbol */
+
+.cash-symbol {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 60px;
+    height: 60px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #16823b;
+
+    color: white;
+
+    font-size: 32px;
+    font-weight: bold;
+}
+
+
+
+/* MANAGE CASH BUTTON */
+
+.manage-cash-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 150px;
+    min-height: 48px;
+
+    padding: 10px 24px;
+
+    background: #16823b;
+
+    color: white;
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.manage-cash-button:hover {
+    background: #116a30;
+}
+
+
+
+/* ==========================================
+   Other Portfolio Buttons
+   ========================================== */
+
+.portfolio-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 28px;
+}
+
+
+.secondary-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+
+    padding: 10px 24px;
+
+    border: 2px solid var(--nav-color);
+
+    background: white;
+
+    color: var(--nav-color);
+
+    font-weight: 500;
+
+    text-decoration: none;
+}
+
+
+.secondary-button:hover {
+    background: #f2f2ff;
+}
+
+
+
+/* Trade links inside table */
+
+.stocks-table .view-button {
+    text-decoration: none;
+}
+
+
+
+/* ==========================================
+   Tablet
+   ========================================== */
+
+@media (max-width: 960px) {
+
+    .portfolio-header {
+        flex-direction: column;
+    }
+
+
+    .portfolio-stats {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+
+    .stat-box {
+        text-align: left;
+    }
+
+}
+
+
+
+/* ==========================================
+   Mobile
+   ========================================== */
+
+@media (max-width: 650px) {
+
+    .portfolio-stats {
+        flex-direction: column;
+
+        gap: 18px;
+    }
+
+
+    .cash-access {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .manage-cash-button {
+        width: 100%;
+    }
+
+
+    .portfolio-actions {
+        flex-direction: column;
+    }
+
+
+    .portfolio-actions a {
+        width: 100%;
+    }
+
+}
