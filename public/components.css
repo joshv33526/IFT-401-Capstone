@@ -1,0 +1,316 @@
+/*  Sections & panels  */
+.content-section {
+  margin-top: 64px;
+  scroll-margin-top: 24px;
+}
+.section-heading {
+  margin: 0 0 4px;
+  font-size: 1.35rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+.section-description {
+  margin: 0 0 20px;
+  max-width: 65ch;
+  color: var(--muted-color);
+  font-size: 0.9rem;
+}
+.panel {
+  padding: 24px;
+  border: 1px solid var(--border-color);
+  background: #fff;
+}
+.panel-heading {
+  margin: 0 0 16px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.panel + .table-container {
+  margin-top: 32px;
+}
+.split-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+  align-items: start;
+}
+
+/*  Forms  */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0 20px;
+}
+.form-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted-color);
+  font-size: 0.8rem;
+}
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.panel .form-group input,
+.panel .form-group select,
+.filter-bar .form-group input,
+.filter-bar .form-group select {
+  background: #f7f7fc;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 2px;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  box-shadow: 0 0 0 1px var(--nav-color);
+  background-color: #e4e4f7;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 24px;
+  border: 2px solid var(--nav-color);
+  border-radius: 0;
+  background: #fff;
+  color: var(--nav-color);
+  text-decoration: none;
+}
+.btn-secondary:hover {
+  background: #f1f1fb;
+}
+
+/* Result message under a form. Hidden until JS fills it in. */
+.form-message {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+}
+.form-message:empty {
+  display: none;
+}
+.form-message.success {
+  border-left: 4px solid var(--positive-color);
+  background: #eef8f1;
+}
+.form-message.error {
+  border-left: 4px solid var(--negative-color);
+  background: #fdf0f2;
+}
+
+/* Checkbox group (trading days) */
+.day-options {
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+}
+.day-options legend {
+  margin-bottom: 8px;
+  padding: 0;
+  font-weight: 600;
+}
+.day-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.day-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #a3a5b0;
+  cursor: pointer;
+}
+.day-option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--nav-color);
+}
+.day-option:has(input:checked) {
+  border-color: var(--nav-color);
+  background: #f1f1fb;
+}
+
+/* Key/value readout (current market hours) */
+.info-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 24px;
+  margin: 0 0 20px;
+}
+.info-list dt {
+  color: var(--muted-color);
+  font-size: 0.9rem;
+}
+.info-list dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/*  Filters (transactions)  */
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 0 16px;
+  align-items: end;
+  margin-top: 48px;
+  padding: 20px 24px 2px;
+  border: 1px solid var(--border-color);
+}
+.filter-bar .form-group input,
+.filter-bar .form-group select {
+  height: 46px;
+}
+.filter-bar .form-actions {
+  margin-bottom: 18px;
+}
+.results-count {
+  margin: 20px 0 0;
+  color: var(--muted-color);
+  font-size: 0.9rem;
+}
+.results-count + .table-container {
+  margin-top: 16px;
+}
+
+/*  Tables  */
+/* Right-align number columns, including when they are the last column */
+.stocks-table th.numeric,
+.stocks-table td.numeric:last-child,
+.stocks-table th.numeric:last-child {
+  text-align: right;
+}
+.stocks-table td.muted {
+  color: var(--muted-color);
+  font-weight: 400;
+}
+.stocks-table.compact-table {
+  min-width: 0;
+}
+.stocks-table.compact-table th,
+.stocks-table.compact-table td {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.remove-button {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--negative-color);
+  background: #fff;
+  color: var(--negative-color);
+  font-size: 0.85rem;
+}
+.remove-button:hover {
+  background: #fdf0f2;
+}
+
+/* Transaction type labels. Text carries the meaning; color is secondary. */
+.type-badge {
+  display: inline-block;
+  min-width: 96px;
+  padding: 3px 10px;
+  border: 1px solid currentColor;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+.type-bought {
+  color: #3437b0;
+  background: #eceefe;
+}
+.type-sold {
+  color: #8a4b00;
+  background: #fff3e0;
+}
+.type-deposit {
+  color: #126b31;
+  background: #e8f6ed;
+}
+.type-withdrawal {
+  color: #b01f31;
+  background: #fdecee;
+}
+
+/* Market open/closed status */
+.status-open {
+  color: var(--positive-color);
+}
+.status-closed {
+  color: var(--negative-color);
+}
+
+/* Admin header  */
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-badge {
+  padding: 2px 8px;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Spacing  */
+.spaced-top {
+  margin-top: 32px;
+}
+.form-actions.spaced-top {
+  margin-top: 16px;
+}
+.table-container.flush {
+  margin-top: 0;
+}
+
+/*  Responsive  */
+@media (max-width: 960px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+  }
+  .filter-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .filter-bar .form-actions {
+    grid-column: 1 / -1;
+  }
+  .content-section {
+    margin-top: 44px;
+  }
+}
+
+@media (max-width: 560px) {
+  .panel {
+    padding: 18px;
+  }
+  .filter-bar {
+    grid-template-columns: 1fr;
+    padding: 16px 16px 2px;
+  }
+  .brand-group {
+    flex-basis: 100%;
+  }
+  .info-list {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .info-list dd {
+    margin-bottom: 8px;
+  }
+}

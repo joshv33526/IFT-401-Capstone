@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Easy Stock Solutions</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="components.css" />
+    <!-- Below script has to be uncommented once linked to api-->
+    <!-- <script src="js/session.js" defer></script> -->
+  </head>
+  <body>
+    <!-- Admin navigation (separate from the customer navigation) -->
+    <header class="site-header">
+      <div class="navbar">
+        <div class="brand-group">
+          <a class="brand" href="admin.html">Easy Stock Solutions</a>
+          <span class="admin-badge">Admin</span>
+        </div>
+        <nav aria-label="Admin navigation">
+          <ul class="nav-links">
+            <li><a href="#stocks">Stocks</a></li>
+            <li><a href="#market-hours">Market Hours</a></li>
+            <li><a href="#market-schedule">Market Schedule</a></li>
+          </ul>
+        </nav>
+        <div class="user-area">
+          <p class="welcome-message">Welcome, Admin</p>
+          <a class="logout-button" href="login.html">Log Out</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="page-header">
+        <div class="page-intro">
+          <h1>Admin Console</h1>
+          <p class="page-description">
+            Add stocks to the market and control when trading is allowed.
+          </p>
+        </div>
+        <div class="summary-panel">
+          <div class="market-summary">
+            <p class="summary-label">Market Status</p>
+            <p class="summary-value status-open" id="marketStatus">Open</p>
+          </div>
+          <div class="portfolio-summary">
+            <p class="summary-label">Listed Stocks</p>
+            <p class="summary-value" id="stockCount">5</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Create New Stock -->
+      <section
+        class="content-section"
+        id="stocks"
+        aria-labelledby="stocksHeading"
+      >
+        <h2 class="section-heading" id="stocksHeading">Create New Stock</h2>
+        <p class="section-description">
+          New stocks become available for customers to trade as soon as they are
+          created.
+        </p>
+
+        <form class="panel" id="createStockForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="tickerSymbol">Ticker</label>
+              <input
+                type="text"
+                id="tickerSymbol"
+                name="ticker"
+                maxlength="5"
+                pattern="[A-Z]{1,5}"
+                required
+                aria-describedby="tickerHint"
+              />
+              <small class="form-hint" id="tickerHint"
+                >1–5 uppercase letters, e.g. AAPL</small
+              >
+            </div>
+            <div class="form-group">
+              <label for="companyName">Company name</label>
+              <input
+                type="text"
+                id="companyName"
+                name="companyName"
+                maxlength="100"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="initialPrice">Initial price ($)</label>
+              <input
+                type="number"
+                id="initialPrice"
+                name="initialPrice"
+                min="0.01"
+                step="0.01"
+                required
+                aria-describedby="priceHint"
+              />
+              <small class="form-hint" id="priceHint"
+                >Must be greater than $0.00</small
+              >
+            </div>
+            <div class="form-group">
+              <label for="stockVolume">Shares available (volume)</label>
+              <input
+                type="number"
+                id="stockVolume"
+                name="volume"
+                min="1"
+                step="1"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" type="submit">Create stock</button>
+            <button class="btn-secondary" type="reset">Clear form</button>
+          </div>
+          <!-- JS fills this in and adds class "success" or "error" -->
+          <p class="form-message" id="createStockMessage" role="status"></p>
+        </form>
+
+        <div
+          class="table-container"
+          role="region"
+          aria-labelledby="stocksCaption"
+          tabindex="0"
+        >
+          <table class="stocks-table" id="adminStocksTable">
+            <caption id="stocksCaption">
+              Stocks currently listed on the market
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Ticker</th>
+                <th scope="col">Company Name</th>
+                <th scope="col" class="numeric">Current Price</th>
+                <th scope="col" class="numeric">Opening Price</th>
+                <th scope="col" class="numeric">Volume</th>
+              </tr>
+            </thead>
+            <!-- Sample rows: replaced by JS once wired to the API -->
+            <tbody id="adminStocksBody">
+              <tr>
+                <td>AAPL</td>
+                <td>Apple Inc.</td>
+                <td class="numeric">$185.24</td>
+                <td class="numeric">$183.99</td>
+                <td class="numeric">1,000,000</td>
+              </tr>
+              <tr>
+                <td>MSFT</td>
+                <td>Microsoft</td>
+                <td class="numeric">$421.35</td>
+                <td class="numeric">$416.68</td>
+                <td class="numeric">750,000</td>
+              </tr>
+              <tr>
+                <td>NVDA</td>
+                <td>NVIDIA</td>
+                <td class="numeric">$118.40</td>
+                <td class="numeric">$118.93</td>
+                <td class="numeric">2,000,000</td>
+              </tr>
+              <tr>
+                <td>AMZN</td>
+                <td>Amazon</td>
+                <td class="numeric">$156.50</td>
+                <td class="numeric">$156.00</td>
+                <td class="numeric">900,000</td>
+              </tr>
+              <tr>
+                <td>GOOGL</td>
+                <td>Google</td>
+                <td class="numeric">$174.20</td>
+                <td class="numeric">$172.75</td>
+                <td class="numeric">850,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Market Hours -->
+      <section
+        class="content-section"
+        id="market-hours"
+        aria-labelledby="hoursHeading"
+      >
+        <h2 class="section-heading" id="hoursHeading">Market Hours</h2>
+        <p class="section-description">
+          Customers can only buy and sell while the market is open. All times
+          are Arizona time (MST).
+        </p>
+
+        <div class="split-layout">
+          <div class="panel">
+            <h3 class="panel-heading">Current hours</h3>
+            <dl class="info-list">
+              <dt>Opens</dt>
+              <dd id="currentOpenTime">9:30 AM</dd>
+              <dt>Closes</dt>
+              <dd id="currentCloseTime">4:00 PM</dd>
+            </dl>
+          </div>
+
+          <form class="panel" id="marketHoursForm">
+            <h3 class="panel-heading">Change hours</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="openTime">Open time</label>
+                <input
+                  type="time"
+                  id="openTime"
+                  name="openTime"
+                  value="09:30"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="closeTime">Close time</label>
+                <input
+                  type="time"
+                  id="closeTime"
+                  name="closeTime"
+                  value="16:00"
+                  required
+                />
+              </div>
+            </div>
+            <small class="form-hint"
+              >Open time must be earlier than close time.</small
+            >
+            <div class="form-actions spaced-top">
+              <button class="btn-primary" type="submit">Save hours</button>
+            </div>
+            <p class="form-message" id="marketHoursMessage" role="status"></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- Market Schedule -->
+      <section
+        class="content-section"
+        id="market-schedule"
+        aria-labelledby="scheduleHeading"
+      >
+        <h2 class="section-heading" id="scheduleHeading">Market Schedule</h2>
+        <p class="section-description">
+          Select the days the market is open, and add holidays or closures when
+          no trading is allowed.
+        </p>
+
+        <form class="panel" id="tradingDaysForm">
+          <fieldset class="day-options">
+            <legend>Trading days</legend>
+            <div class="day-list">
+              <label class="day-option"
+                ><input type="checkbox" name="days" value="mon" checked />
+                Monday</label
+              >
+              <label class="day-option"
+                ><input type="checkbox" name="days" value="tue" checked />
+                Tuesday</label
+              >
+              <label class="day-option"
+                ><input type="checkbox" name="days" value="wed" checked />
+                Wednesday</label
+              >
+              <label class="day-option"
+                ><input type="checkbox" name="days" value="thu" checked />
+                Thursday</label
+              >
+              <label class="day-option"
+                ><input type="checkbox" name="days" value="fri" checked />
+                Friday</label
+              >
+              <label class="day-option"
+                ><input type="checkbox" name="days" value="sat" />
+                Saturday</label
+              >
+              <label class="day-option"
+                ><input type="checkbox" name="days" value="sun" /> Sunday</label
+              >
+            </div>
+          </fieldset>
+          <div class="form-actions">
+            <button class="btn-primary" type="submit">Save trading days</button>
+          </div>
+          <p class="form-message" id="tradingDaysMessage" role="status"></p>
+        </form>
+
+        <div class="split-layout spaced-top">
+          <form class="panel" id="addHolidayForm">
+            <h3 class="panel-heading">Add a holiday or closure</h3>
+            <div class="form-group">
+              <label for="holidayDate">Date</label>
+              <input type="date" id="holidayDate" name="holidayDate" required />
+            </div>
+            <div class="form-group">
+              <label for="holidayName">Name</label>
+              <input
+                type="text"
+                id="holidayName"
+                name="holidayName"
+                maxlength="60"
+                required
+                aria-describedby="holidayHint"
+              />
+              <small class="form-hint" id="holidayHint"
+                >e.g. Thanksgiving Day</small
+              >
+            </div>
+            <div class="form-actions">
+              <button class="btn-primary" type="submit">Add closure</button>
+            </div>
+            <p class="form-message" id="addHolidayMessage" role="status"></p>
+          </form>
+
+          <div
+            class="table-container flush"
+            role="region"
+            aria-labelledby="holidaysCaption"
+            tabindex="0"
+          >
+            <table class="stocks-table compact-table" id="holidaysTable">
+              <caption id="holidaysCaption">
+                Upcoming closures
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <!-- Sample rows: replaced by JS once wired to the API -->
+              <tbody id="holidaysBody">
+                <tr>
+                  <td><time datetime="2026-11-26">Nov 26, 2026</time></td>
+                  <td>Thanksgiving Day</td>
+                  <td>
+                    <button class="remove-button" type="button">Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><time datetime="2026-12-25">Dec 25, 2026</time></td>
+                  <td>Christmas Day</td>
+                  <td>
+                    <button class="remove-button" type="button">Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><time datetime="2027-01-01">Jan 1, 2027</time></td>
+                  <td>New Year's Day</td>
+                  <td>
+                    <button class="remove-button" type="button">Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#">About</a> <a href="#">Help</a> <a href="#">Contact</a>
+        <a href="#">Terms</a> <a href="#">Privacy</a>
+      </nav>
+    </footer>
+  </body>
+</html>

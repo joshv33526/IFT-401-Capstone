@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transaction History | Easy Stock Solutions</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="components.css" />
+    <!-- Below script has to be uncommented once linked to api-->
+    <!-- <script src="js/session.js" defer></script> -->
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="navbar">
+        <a class="brand" href="dashboard.html">Easy Stock Solutions</a>
+        <nav aria-label="Main navigation">
+          <ul class="nav-links">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="trade.html">Trade</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="transactions.html" aria-current="page">History</a></li>
+          </ul>
+        </nav>
+        <div class="user-area">
+          <p class="welcome-message">Welcome</p>
+          <a class="logout-button" href="login.html">Log Out</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="page-header">
+        <div class="page-intro">
+          <h1>Transaction History</h1>
+          <p class="page-description">
+            Review your completed stock purchases, sales, deposits, and
+            withdrawals.
+          </p>
+        </div>
+        <div class="summary-panel">
+          <div class="market-summary">
+            <p class="summary-label">Cash Balance</p>
+            <p class="summary-value" id="cashBalance">$3,200.00</p>
+          </div>
+          <div class="portfolio-summary">
+            <p class="summary-label">Transactions</p>
+            <p class="summary-value" id="transactionTotal">9</p>
+          </div>
+        </div>
+      </section>
+
+      <form
+        class="filter-bar"
+        id="transactionFilters"
+        aria-label="Filter transactions"
+      >
+        <div class="form-group">
+          <label for="filterFrom">From</label>
+          <input type="date" id="filterFrom" name="from" />
+        </div>
+        <div class="form-group">
+          <label for="filterTo">To</label>
+          <input type="date" id="filterTo" name="to" />
+        </div>
+        <div class="form-group">
+          <label for="filterType">Transaction type</label>
+          <select id="filterType" name="type">
+            <option value="all">All types</option>
+            <option value="bought">Bought</option>
+            <option value="sold">Sold</option>
+            <option value="deposit">Deposit</option>
+            <option value="withdrawal">Withdrawal</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" type="submit">Apply filters</button>
+          <button class="btn-secondary" type="reset">Clear</button>
+        </div>
+      </form>
+
+      <p class="results-count" id="resultsCount" role="status">
+        Showing 9 transactions, most recent first.
+      </p>
+
+      <section
+        class="table-container"
+        aria-label="Transaction history"
+        tabindex="0"
+      >
+        <table class="stocks-table" id="transactionsTable">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Type</th>
+              <th scope="col">Ticker</th>
+              <th scope="col" class="numeric">Quantity</th>
+              <th scope="col" class="numeric">Price</th>
+              <th scope="col" class="numeric">Amount</th>
+              <th scope="col" class="numeric">Balance</th>
+            </tr>
+          </thead>
+          <!-- Sample rows: replaced by JS once wired to the API -->
+          <tbody id="transactionsBody">
+            <tr>
+              <td><time datetime="2026-09-15">Sep 15, 2026</time></td>
+              <td>
+                <span class="type-badge type-withdrawal">Withdrawal</span>
+              </td>
+              <td class="muted">—</td>
+              <td class="numeric muted">—</td>
+              <td class="numeric muted">—</td>
+              <td class="numeric negative">−$790.00</td>
+              <td class="numeric">$3,200.00</td>
+            </tr>
+            <tr>
+              <td><time datetime="2026-09-12">Sep 12, 2026</time></td>
+              <td><span class="type-badge type-sold">Sold</span></td>
+              <td>AAPL</td>
+              <td class="numeric">10</td>
+              <td class="numeric">$182.00</td>
+              <td class="numeric positive">+$1,820.00</td>
+              <td class="numeric">$3,990.00</td>
+            </tr>
+            <tr>
+              <td><time datetime="2026-09-11">Sep 11, 2026</time></td>
+              <td><span class="type-badge type-bought">Bought</span></td>
+              <td>GOOGL</td>
+              <td class="numeric">8</td>
+              <td class="numeric">$160.00</td>
+              <td class="numeric negative">−$1,280.00</td>
+              <td class="numeric">$2,170.00</td>
+            </tr>
+            <tr>
+              <td><time datetime="2026-09-10">Sep 10, 2026</time></td>
+              <td><span class="type-badge type-bought">Bought</span></td>
+              <td>AMZN</td>
+              <td class="numeric">10</td>
+              <td class="numeric">$140.00</td>
+              <td class="numeric negative">−$1,400.00</td>
+              <td class="numeric">$3,450.00</td>
+            </tr>
+            <tr>
+              <td><time datetime="2026-09-09">Sep 9, 2026</time></td>
+              <td><span class="type-badge type-bought">Bought</span></td>
+              <td>NVDA</td>
+              <td class="numeric">15</td>
+              <td class="numeric">$130.00</td>
+              <td class="numeric negative">−$1,950.00</td>
+              <td class="numeric">$4,850.00</td>
+            </tr>
+            <tr>
+              <td><time datetime="2026-09-08">Sep 8, 2026</time></td>
+              <td><span class="type-badge type-deposit">Deposit</span></td>
+              <td class="muted">—</td>
+              <td class="numeric muted">—</td>
+              <td class="numeric muted">—</td>
+              <td class="numeric positive">+$5,000.00</td>
+              <td class="numeric">$6,800.00</td>
+            </tr>
+            <tr>
+              <td><time datetime="2026-09-03">Sep 3, 2026</time></td>
+              <td><span class="type-badge type-bought">Bought</span></td>
+              <td>MSFT</td>
+              <td class="numeric">20</td>
+              <td class="numeric">$400.00</td>
+              <td class="numeric negative">−$8,000.00</td>
+              <td class="numeric">$1,800.00</td>
+            </tr>
+            <tr>
+              <td><time datetime="2026-09-02">Sep 2, 2026</time></td>
+              <td><span class="type-badge type-bought">Bought</span></td>
+              <td>AAPL</td>
+              <td class="numeric">60</td>
+              <td class="numeric">$170.00</td>
+              <td class="numeric negative">−$10,200.00</td>
+              <td class="numeric">$9,800.00</td>
+            </tr>
+            <tr>
+              <td><time datetime="2026-09-01">Sep 1, 2026</time></td>
+              <td><span class="type-badge type-deposit">Deposit</span></td>
+              <td class="muted">—</td>
+              <td class="numeric muted">—</td>
+              <td class="numeric muted">—</td>
+              <td class="numeric positive">+$20,000.00</td>
+              <td class="numeric">$20,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- JS removes "hidden" when there are no transactions -->
+        <p class="empty-state" id="transactionsEmpty" hidden>
+          No transactions yet. Deposit cash to start trading.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#">About</a> <a href="#">Help</a> <a href="#">Contact</a>
+        <a href="#">Terms</a> <a href="#">Privacy</a>
+      </nav>
+    </footer>
+  </body>
+</html>
