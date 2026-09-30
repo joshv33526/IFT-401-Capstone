@@ -254,6 +254,46 @@ img, svg { max-width: 100%; vertical-align: middle; }
   border: 0;
 }
 
+/* Trade Page */
+
+.trade-card {
+    margin-top: 32px;
+    padding: 28px;
+    border: 1px solid var(--border-color);
+    background: #ffffff;
+}
+
+.trade-card h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.trade-card .form-group {
+    max-width: 500px;
+}
+
+.trade-card select,
+.trade-card input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #a3a5b0;
+    background: #ffffff;
+}
+
+.trade-card input[readonly] {
+    background: #f5f5f7;
+}
+
+.cancel-order-button {
+    background: #d5263b;
+    color: white;
+}
+
+.cancel-order-button:hover {
+    background: #b51f31;
+}
+
 @media (max-width: 960px) {
   .navbar { gap: 12px; }
   .navbar > nav { order: 3; flex-basis: 100%; }
@@ -282,3 +322,4 @@ img, svg { max-width: 100%; vertical-align: middle; }
   .site-footer { padding: 16px 8px; }
   .footer-links a { padding-inline: 9px; }
 }
+
