@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Trade Stocks | Easy Stock Solutions</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Top Navigation -->
+    <header class="site-header">
+        <div class="navbar">
+
+            <a class="brand" href="dashboard.html">
+                Easy Stock Solutions
+            </a>
+
+            <nav>
+                <div class="nav-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="trade.html">Trade</a>
+                    <a href="portfolio.html">Portfolio</a>
+                    <a href="transactions.html">History</a>
+                </div>
+            </nav>
+
+            <div class="user-area">
+                <p class="welcome-message">
+                    Welcome, Josh
+                </p>
+
+                <a class="logout-button" href="login.html">
+                    Log Out
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <section class="page-intro">
+            <h1 class="page-title">Trade Stocks</h1>
+
+            <p class="page-description">
+                Buy and sell available stocks or cancel a pending stock order.
+            </p>
+        </section>
+
+
+        <!-- Buy Stock Section -->
+        <section class="trade-card">
+
+            <h2>Buy Stock</h2>
+
+            <form id="buyForm">
+
+                <div class="form-group">
+                    <label for="buyStock">Stock</label>
+
+                    <select id="buyStock" name="buyStock" required>
+                        <option value="">Select a stock</option>
+                        <option value="AAPL">AAPL - Apple Inc.</option>
+                        <option value="MSFT">MSFT - Microsoft</option>
+                        <option value="NVDA">NVDA - NVIDIA</option>
+                        <option value="AMZN">AMZN - Amazon</option>
+                        <option value="GOOGL">GOOGL - Google</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="buyPrice">Current Market Price</label>
+
+                    <input
+                        type="text"
+                        id="buyPrice"
+                        value="$0.00"
+                        readonly
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="buyQuantity">Number of Shares</label>
+
+                    <input
+                        type="number"
+                        id="buyQuantity"
+                        name="buyQuantity"
+                        min="1"
+                        placeholder="Enter number of shares"
+                        required
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="estimatedCost">Estimated Cost</label>
+
+                    <input
+                        type="text"
+                        id="estimatedCost"
+                        value="$0.00"
+                        readonly
+                    >
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    Buy Stock
+                </button>
+
+            </form>
+
+            <p id="buyMessage"></p>
+
+        </section>
+
+
+        <!-- Sell Stock Section -->
+        <section class="trade-card">
+
+            <h2>Sell Stock</h2>
+
+            <form id="sellForm">
+
+                <div class="form-group">
+                    <label for="sellStock">Stock</label>
+
+                    <select id="sellStock" name="sellStock" required>
+                        <option value="">Select a stock</option>
+                        <option value="AAPL">AAPL - Apple Inc.</option>
+                        <option value="MSFT">MSFT - Microsoft</option>
+                        <option value="NVDA">NVDA - NVIDIA</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="sharesOwned">Shares Owned</label>
+
+                    <input
+                        type="text"
+                        id="sharesOwned"
+                        value="0"
+                        readonly
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="sellPrice">Current Market Price</label>
+
+                    <input
+                        type="text"
+                        id="sellPrice"
+                        value="$0.00"
+                        readonly
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="sellQuantity">Number of Shares</label>
+
+                    <input
+                        type="number"
+                        id="sellQuantity"
+                        name="sellQuantity"
+                        min="1"
+                        placeholder="Enter number of shares"
+                        required
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="estimatedProceeds">Estimated Proceeds</label>
+
+                    <input
+                        type="text"
+                        id="estimatedProceeds"
+                        value="$0.00"
+                        readonly
+                    >
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    Sell Stock
+                </button>
+
+            </form>
+
+            <p id="sellMessage"></p>
+
+        </section>
+
+
+        <!-- Cancel Order Section -->
+        <section class="trade-card">
+
+            <h2>Cancel Pending Order</h2>
+
+            <p>
+                Select one of your pending stock orders to cancel it before execution.
+            </p>
+
+
+            <div class="table-container">
+
+                <table class="stocks-table">
+
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Ticker</th>
+                            <th>Type</th>
+                            <th>Shares</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="pendingOrders">
+
+                        <tr>
+                            <td>1001</td>
+                            <td>AAPL</td>
+                            <td>BUY</td>
+                            <td>5</td>
+                            <td>Pending</td>
+                            <td>
+                                <button
+                                    class="view-button cancel-order-button"
+                                    data-order-id="1001"
+                                >
+                                    Cancel
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>1002</td>
+                            <td>NVDA</td>
+                            <td>SELL</td>
+                            <td>3</td>
+                            <td>Pending</td>
+                            <td>
+                                <button
+                                    class="view-button cancel-order-button"
+                                    data-order-id="1002"
+                                >
+                                    Cancel
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <p id="cancelMessage"></p>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="site-footer">
+
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Help</a>
+            <a href="#">Contact</a>
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+        </div>
+
+        <p>
+            Easy Stock Solutions
+        </p>
+
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script src="trade.js"></script>
+
+</body>
+</html>
