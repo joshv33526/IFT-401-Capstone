@@ -11,19 +11,23 @@
     <h1>Easy Stock Solutions</h1>
     <h2>Login</h2>
 
-    <form>
+    <form id="loginForm">
         <label for="username">Username</label>
-        <input type="text" id="username">
+        <input type="text" id="username" required autocomplete="username">
 
         <label for="password">Password</label>
-        <input type="password" id="password">
+        <input type="password" id="password" required autocomplete="current-password">
 
         <button type="submit">Login</button>
     </form>
-<p class="register-link">
-    Don't have an account?
-    <a href="register.html">Create an Account</a>
-</p>
 
+    <p id="loginMessage" role="alert"></p>
+
+    <p class="register-link">
+        Don't have an account?
+        <a href="register.html">Create an Account</a>
+    </p>
+
+    <script src="js/login.js"></script>
 </body>
 </html>
