@@ -46,6 +46,7 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/cash", require("./routes/cash"));
 app.use("/api/trade", require("./routes/trade"));
 app.use("/api/market", require("./routes/market"));
+app.use("/api/transactions", require("./routes/transactions"));
 
 // Unknown /api/... path
 app.use("/api", (req, res) => res.status(404).json({ error: "Not found" }));
@@ -55,7 +56,11 @@ app.use("/api", (req, res) => res.status(404).json({ error: "Not found" }));
 // on the server and never sent to the browser.
 app.use((err, req, res, next) => {
   if (!err.expose) console.error(err);
-  res.status(err.status || 500).json({ error: err.expose ? err.message : "Internal server error" });
+  res
+    .status(err.status || 500)
+    .json({ error: err.expose ? err.message : "Internal server error" });
 });
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () =>
+  console.log(`Server running on http://localhost:${PORT}`),
+);
