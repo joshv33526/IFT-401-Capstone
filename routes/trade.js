@@ -1,13 +1,4 @@
-// /api/trade  -  buy and sell stock  (Ethan)
-//
-// Each trade is ONE database transaction that:
-//   1. reads the stock price        (locked FOR SHARE so it can't change mid-trade)
-//   2. locks the user's cash row    (FOR UPDATE)
-//   3. checks funds / shares
-//   4. updates cash + holdings
-//   5. records the order, the executed transaction, and the cash ledger entry
-// If any step fails, all of it is rolled back.
-//
+// /api/trade  -  buy and sell stock
 // Lock order is always stocks -> cash_accounts -> holdings in every route,
 // which prevents deadlocks between concurrent trades.
 const express = require("express");
@@ -51,7 +42,19 @@ async function lockStockAndCash(conn, ticker, userId) {
 }
 
 // Writes the order, transaction, and cash ledger rows (same for buy and sell).
-async function recordTrade(conn, { userId, stock, acct, side, quantity, priceCents, totalCents, newBalanceCents }) {
+async function recordTrade(
+  conn,
+  {
+    userId,
+    stock,
+    acct,
+    side,
+    quantity,
+    priceCents,
+    totalCents,
+    newBalanceCents,
+  },
+) {
   const [order] = await conn.query(
     `INSERT INTO orders (user_id, stock_id, side, quantity, price, status)
      VALUES (?, ?, ?, ?, ?, 'FILLED')`,
@@ -60,12 +63,26 @@ async function recordTrade(conn, { userId, stock, acct, side, quantity, priceCen
   await conn.query(
     `INSERT INTO transactions (order_id, user_id, stock_id, side, quantity, price, total)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [order.insertId, userId, stock.stock_id, side, quantity, fromCents(priceCents), fromCents(totalCents)],
+    [
+      order.insertId,
+      userId,
+      stock.stock_id,
+      side,
+      quantity,
+      fromCents(priceCents),
+      fromCents(totalCents),
+    ],
   );
   await conn.query(
     `INSERT INTO cash_transactions (cash_account_id, txn_type, amount, balance_after, order_id)
      VALUES (?, ?, ?, ?, ?)`,
-    [acct.cash_account_id, side, fromCents(totalCents), fromCents(newBalanceCents), order.insertId],
+    [
+      acct.cash_account_id,
+      side,
+      fromCents(totalCents),
+      fromCents(newBalanceCents),
+      order.insertId,
+    ],
   );
   return {
     orderId: order.insertId,
@@ -78,87 +95,117 @@ async function recordTrade(conn, { userId, stock, acct, side, quantity, priceCen
   };
 }
 
-// POST /api/trade/buy   body: { "ticker": "AAPL", "quantity": 5 }
-router.post("/buy", requireLogin, requireMarketOpen, tradeRules, validate, async (req, res) => {
-  const userId = req.session.userId;
-  const { ticker, quantity } = req.body;
+// POST /api/trade/buy
+router.post(
+  "/buy",
+  requireLogin,
+  requireMarketOpen,
+  tradeRules,
+  validate,
+  async (req, res) => {
+    const userId = req.session.userId;
+    const { ticker, quantity } = req.body;
 
-  const result = await withTransaction(async (conn) => {
-    const { stock, acct } = await lockStockAndCash(conn, ticker, userId);
+    const result = await withTransaction(async (conn) => {
+      const { stock, acct } = await lockStockAndCash(conn, ticker, userId);
 
-    const priceCents = toCents(stock.current_price);
-    const totalCents = priceCents * quantity;
-    const balanceCents = toCents(acct.balance);
-    if (totalCents > balanceCents) throw new HttpError(400, "Insufficient funds");
-    const newBalanceCents = balanceCents - totalCents;
+      const priceCents = toCents(stock.current_price);
+      const totalCents = priceCents * quantity;
+      const balanceCents = toCents(acct.balance);
+      if (totalCents > balanceCents)
+        throw new HttpError(400, "Insufficient funds");
+      const newBalanceCents = balanceCents - totalCents;
 
-    await conn.query("UPDATE cash_accounts SET balance = ? WHERE cash_account_id = ?", [
-      fromCents(newBalanceCents),
-      acct.cash_account_id,
-    ]);
+      await conn.query(
+        "UPDATE cash_accounts SET balance = ? WHERE cash_account_id = ?",
+        [fromCents(newBalanceCents), acct.cash_account_id],
+      );
 
-    // Add shares; if the user already owns this stock, update the
-    // weighted-average cost. avg_cost must be set BEFORE quantity because
-    // MySQL applies these assignments left to right.
-    await conn.query(
-      `INSERT INTO holdings (user_id, stock_id, quantity, avg_cost)
+      // Add shares; if the user already owns this stock, update the
+      // weighted-average cost.
+      await conn.query(
+        `INSERT INTO holdings (user_id, stock_id, quantity, avg_cost)
        VALUES (?, ?, ?, ?) AS new
        ON DUPLICATE KEY UPDATE
          avg_cost = (holdings.avg_cost * holdings.quantity + new.avg_cost * new.quantity)
                     / (holdings.quantity + new.quantity),
          quantity = holdings.quantity + new.quantity`,
-      [userId, stock.stock_id, quantity, fromCents(priceCents)],
-    );
+        [userId, stock.stock_id, quantity, fromCents(priceCents)],
+      );
 
-    return recordTrade(conn, {
-      userId, stock, acct, side: "BUY", quantity, priceCents, totalCents, newBalanceCents,
+      return recordTrade(conn, {
+        userId,
+        stock,
+        acct,
+        side: "BUY",
+        quantity,
+        priceCents,
+        totalCents,
+        newBalanceCents,
+      });
     });
-  });
 
-  res.status(201).json(result);
-});
+    res.status(201).json(result);
+  },
+);
 
 // POST /api/trade/sell  body: { "ticker": "AAPL", "quantity": 2 }
-router.post("/sell", requireLogin, requireMarketOpen, tradeRules, validate, async (req, res) => {
-  const userId = req.session.userId;
-  const { ticker, quantity } = req.body;
+router.post(
+  "/sell",
+  requireLogin,
+  requireMarketOpen,
+  tradeRules,
+  validate,
+  async (req, res) => {
+    const userId = req.session.userId;
+    const { ticker, quantity } = req.body;
 
-  const result = await withTransaction(async (conn) => {
-    const { stock, acct } = await lockStockAndCash(conn, ticker, userId);
+    const result = await withTransaction(async (conn) => {
+      const { stock, acct } = await lockStockAndCash(conn, ticker, userId);
 
-    const [[holding]] = await conn.query(
-      "SELECT holding_id, quantity FROM holdings WHERE user_id = ? AND stock_id = ? FOR UPDATE",
-      [userId, stock.stock_id],
-    );
-    if (!holding || holding.quantity < quantity) {
-      throw new HttpError(400, `Not enough ${stock.ticker} shares to sell`);
-    }
+      const [[holding]] = await conn.query(
+        "SELECT holding_id, quantity FROM holdings WHERE user_id = ? AND stock_id = ? FOR UPDATE",
+        [userId, stock.stock_id],
+      );
+      if (!holding || holding.quantity < quantity) {
+        throw new HttpError(400, `Not enough ${stock.ticker} shares to sell`);
+      }
 
-    if (holding.quantity === quantity) {
-      await conn.query("DELETE FROM holdings WHERE holding_id = ?", [holding.holding_id]);
-    } else {
-      await conn.query("UPDATE holdings SET quantity = quantity - ? WHERE holding_id = ?", [
+      if (holding.quantity === quantity) {
+        await conn.query("DELETE FROM holdings WHERE holding_id = ?", [
+          holding.holding_id,
+        ]);
+      } else {
+        await conn.query(
+          "UPDATE holdings SET quantity = quantity - ? WHERE holding_id = ?",
+          [quantity, holding.holding_id],
+        );
+      }
+
+      // Sale proceeds go into the cash account (per the project plan).
+      const priceCents = toCents(stock.current_price);
+      const totalCents = priceCents * quantity;
+      const newBalanceCents = toCents(acct.balance) + totalCents;
+
+      await conn.query(
+        "UPDATE cash_accounts SET balance = ? WHERE cash_account_id = ?",
+        [fromCents(newBalanceCents), acct.cash_account_id],
+      );
+
+      return recordTrade(conn, {
+        userId,
+        stock,
+        acct,
+        side: "SELL",
         quantity,
-        holding.holding_id,
-      ]);
-    }
-
-    // Sale proceeds go into the cash account (per the project plan).
-    const priceCents = toCents(stock.current_price);
-    const totalCents = priceCents * quantity;
-    const newBalanceCents = toCents(acct.balance) + totalCents;
-
-    await conn.query("UPDATE cash_accounts SET balance = ? WHERE cash_account_id = ?", [
-      fromCents(newBalanceCents),
-      acct.cash_account_id,
-    ]);
-
-    return recordTrade(conn, {
-      userId, stock, acct, side: "SELL", quantity, priceCents, totalCents, newBalanceCents,
+        priceCents,
+        totalCents,
+        newBalanceCents,
+      });
     });
-  });
 
-  res.status(201).json(result);
-});
+    res.status(201).json(result);
+  },
+);
 
 module.exports = router;
