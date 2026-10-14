@@ -1,6 +1,6 @@
 // /api/market  -  market status (public, read-only)
-// Josh: the admin "change market hours" and "market schedule" routes go here too,
-// protected with requireAdmin from middleware/auth.js.
+// Admin routes that CHANGE market hours, trading days and holidays are in
+// routes/admin.js (/api/admin/market/...), protected with requireAdmin.
 const express = require("express");
 const { getMarketStatus } = require("../middleware/market");
 

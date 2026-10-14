@@ -47,6 +47,7 @@ app.use("/api/cash", require("./routes/cash"));
 app.use("/api/trade", require("./routes/trade"));
 app.use("/api/market", require("./routes/market"));
 app.use("/api/transactions", require("./routes/transactions"));
+app.use("/api/admin", require("./routes/admin"));
 
 // Unknown /api/... path
 app.use("/api", (req, res) => res.status(404).json({ error: "Not found" }));

@@ -6,8 +6,8 @@
     <title>Admin | Easy Stock Solutions</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="components.css" />
-    <!-- Below script has to be uncommented once linked to api-->
-    <!-- <script src="js/session.js" defer></script> -->
+    <script src="js/session.js" defer></script>
+    <script src="js/admin.js" defer></script>
   </head>
   <body>
     <!-- Admin navigation (separate from the customer navigation) -->
@@ -42,11 +42,11 @@
         <div class="summary-panel">
           <div class="market-summary">
             <p class="summary-label">Market Status</p>
-            <p class="summary-value status-open" id="marketStatus">Open</p>
+            <p class="summary-value" id="marketStatus">-</p>
           </div>
           <div class="portfolio-summary">
             <p class="summary-label">Listed Stocks</p>
-            <p class="summary-value" id="stockCount">5</p>
+            <p class="summary-value" id="stockCount">-</p>
           </div>
         </div>
       </section>
@@ -140,48 +140,12 @@
                 <th scope="col">Ticker</th>
                 <th scope="col">Company Name</th>
                 <th scope="col" class="numeric">Current Price</th>
-                <th scope="col" class="numeric">Opening Price</th>
+                <th scope="col" class="numeric">Initial Price</th>
                 <th scope="col" class="numeric">Volume</th>
               </tr>
             </thead>
-            <!-- Sample rows: replaced by JS once wired to the API -->
-            <tbody id="adminStocksBody">
-              <tr>
-                <td>AAPL</td>
-                <td>Apple Inc.</td>
-                <td class="numeric">$185.24</td>
-                <td class="numeric">$183.99</td>
-                <td class="numeric">1,000,000</td>
-              </tr>
-              <tr>
-                <td>MSFT</td>
-                <td>Microsoft</td>
-                <td class="numeric">$421.35</td>
-                <td class="numeric">$416.68</td>
-                <td class="numeric">750,000</td>
-              </tr>
-              <tr>
-                <td>NVDA</td>
-                <td>NVIDIA</td>
-                <td class="numeric">$118.40</td>
-                <td class="numeric">$118.93</td>
-                <td class="numeric">2,000,000</td>
-              </tr>
-              <tr>
-                <td>AMZN</td>
-                <td>Amazon</td>
-                <td class="numeric">$156.50</td>
-                <td class="numeric">$156.00</td>
-                <td class="numeric">900,000</td>
-              </tr>
-              <tr>
-                <td>GOOGL</td>
-                <td>Google</td>
-                <td class="numeric">$174.20</td>
-                <td class="numeric">$172.75</td>
-                <td class="numeric">850,000</td>
-              </tr>
-            </tbody>
+            <!-- Rows are added by js/admin.js -->
+            <tbody id="adminStocksBody"></tbody>
           </table>
         </div>
       </section>
@@ -195,7 +159,7 @@
         <h2 class="section-heading" id="hoursHeading">Market Hours</h2>
         <p class="section-description">
           Customers can only buy and sell while the market is open. All times
-          are Arizona time (MST).
+          are <span id="marketTimezone">market</span> time.
         </p>
 
         <div class="split-layout">
@@ -203,9 +167,9 @@
             <h3 class="panel-heading">Current hours</h3>
             <dl class="info-list">
               <dt>Opens</dt>
-              <dd id="currentOpenTime">9:30 AM</dd>
+              <dd id="currentOpenTime">-</dd>
               <dt>Closes</dt>
-              <dd id="currentCloseTime">4:00 PM</dd>
+              <dd id="currentCloseTime">-</dd>
             </dl>
           </div>
 
@@ -339,31 +303,13 @@
                   <th scope="col">Action</th>
                 </tr>
               </thead>
-              <!-- Sample rows: replaced by JS once wired to the API -->
-              <tbody id="holidaysBody">
-                <tr>
-                  <td><time datetime="2026-11-26">Nov 26, 2026</time></td>
-                  <td>Thanksgiving Day</td>
-                  <td>
-                    <button class="remove-button" type="button">Remove</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><time datetime="2026-12-25">Dec 25, 2026</time></td>
-                  <td>Christmas Day</td>
-                  <td>
-                    <button class="remove-button" type="button">Remove</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><time datetime="2027-01-01">Jan 1, 2027</time></td>
-                  <td>New Year's Day</td>
-                  <td>
-                    <button class="remove-button" type="button">Remove</button>
-                  </td>
-                </tr>
-              </tbody>
+              <!-- Rows are added by js/admin.js -->
+              <tbody id="holidaysBody"></tbody>
             </table>
+            <!-- js/admin.js shows this when there are no upcoming closures -->
+            <p class="empty-state" id="holidaysEmpty" hidden>
+              No upcoming closures.
+            </p>
           </div>
         </div>
       </section>
