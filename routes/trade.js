@@ -2,8 +2,8 @@
 // Lock order is always stocks -> cash_accounts -> holdings in every route,
 // which prevents deadlocks between concurrent trades.
 const express = require("express");
-const { body } = require("express-validator");
-const { withTransaction } = require("../db");
+const { body, param } = require("express-validator");
+const { pool, withTransaction } = require("../db");
 const { requireLogin } = require("../middleware/auth");
 const { requireMarketOpen } = require("../middleware/market");
 const validate = require("../middleware/validate");
@@ -205,6 +205,81 @@ router.post(
     });
 
     res.status(201).json(result);
+  },
+);
+
+// GET /api/trade/stocks
+// Every stock with its current price and how many shares the logged-in user
+// owns. Fills the buy/sell dropdowns on trade.html.
+router.get("/stocks", requireLogin, async (req, res) => {
+  const [rows] = await pool.query(
+    `SELECT s.ticker, s.company_name, s.current_price,
+            COALESCE(h.quantity, 0) AS shares_owned
+     FROM stocks s
+     LEFT JOIN holdings h ON h.stock_id = s.stock_id AND h.user_id = ?
+     ORDER BY s.ticker`,
+    [req.session.userId],
+  );
+  res.json({
+    stocks: rows.map((r) => ({
+      ticker: r.ticker,
+      companyName: r.company_name,
+      price: r.current_price,
+      sharesOwned: Number(r.shares_owned),
+    })),
+  });
+});
+
+// GET /api/trade/orders/pending
+// The logged-in user's PENDING orders (shown in the Cancel Pending Order table).
+router.get("/orders/pending", requireLogin, async (req, res) => {
+  const [rows] = await pool.query(
+    `SELECT o.order_id, s.ticker, o.side, o.quantity, o.status
+     FROM orders o
+     JOIN stocks s ON s.stock_id = o.stock_id
+     WHERE o.user_id = ? AND o.status = 'PENDING'
+     ORDER BY o.order_id`,
+    [req.session.userId],
+  );
+  res.json({
+    orders: rows.map((r) => ({
+      orderId: r.order_id,
+      ticker: r.ticker,
+      side: r.side,
+      quantity: r.quantity,
+      status: r.status,
+    })),
+  });
+});
+
+// POST /api/trade/orders/:orderId/cancel
+// Cancels one of the logged-in user's own PENDING orders. A pending order has
+// not moved any cash or shares yet, so only the order status changes.
+router.post(
+  "/orders/:orderId/cancel",
+  requireLogin,
+  param("orderId").isInt({ min: 1 }).withMessage("Invalid order id"),
+  validate,
+  async (req, res) => {
+    const userId = req.session.userId;
+    const orderId = Number(req.params.orderId);
+
+    await withTransaction(async (conn) => {
+      const [[order]] = await conn.query(
+        "SELECT order_id, status FROM orders WHERE order_id = ? AND user_id = ? FOR UPDATE",
+        [orderId, userId],
+      );
+      if (!order) throw new HttpError(404, "Order not found");
+      if (order.status !== "PENDING") {
+        throw new HttpError(400, "Only pending orders can be cancelled");
+      }
+      await conn.query(
+        "UPDATE orders SET status = 'CANCELLED' WHERE order_id = ?",
+        [orderId],
+      );
+    });
+
+    res.json({ orderId, status: "CANCELLED" });
   },
 );
 
