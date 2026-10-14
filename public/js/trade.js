@@ -1,4 +1,3 @@
-// Trade page: server quotes are estimates; the API sets the execution price.
 (() => {
   const el = (id) => document.getElementById(id);
   const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
