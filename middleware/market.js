@@ -4,7 +4,7 @@
 // Without this, 9:30 AM market open would actually mean 9:30 AM UTC.
 const { pool } = require("../db");
 
-const MARKET_TZ = process.env.MARKET_TZ || "America/New_York";
+const MARKET_TZ = process.env.MARKET_TZ || "America/Phoenix";
 const WEEKDAYS = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 
 function marketClock(date = new Date()) {
@@ -27,6 +27,12 @@ function marketClock(date = new Date()) {
   };
 }
 
+// "16:00:00" -> "4:00 PM" (for messages shown to users)
+function formatTime(hms) {
+  const [h, m] = String(hms).split(":").map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
+}
+
 async function getMarketStatus() {
   const now = marketClock();
 
@@ -35,7 +41,12 @@ async function getMarketStatus() {
     [now.date],
   );
   if (holidays.length) {
-    return { open: false, reason: `Closed for ${holidays[0].description}`, now, timezone: MARKET_TZ };
+    return {
+      open: false,
+      reason: `Closed for ${holidays[0].description}`,
+      now,
+      timezone: MARKET_TZ,
+    };
   }
 
   const [[day]] = await pool.query(
@@ -43,13 +54,20 @@ async function getMarketStatus() {
     [now.dayOfWeek],
   );
   if (!day || !day.is_open) {
-    return { open: false, reason: "Market is closed today", now, timezone: MARKET_TZ };
+    return {
+      open: false,
+      reason: "Market is closed today",
+      now,
+      timezone: MARKET_TZ,
+    };
   }
 
   const open = now.time >= day.open_time && now.time < day.close_time;
   return {
     open,
-    reason: open ? "Market is open" : `Market hours are ${day.open_time} to ${day.close_time}`,
+    reason: open
+      ? "Market is open"
+      : `Market hours are ${formatTime(day.open_time)} to ${formatTime(day.close_time)}`,
     openTime: day.open_time,
     closeTime: day.close_time,
     now,
@@ -59,7 +77,10 @@ async function getMarketStatus() {
 
 async function requireMarketOpen(req, res, next) {
   // Dev/testing override so we can test trades at night or on weekends.
-  if (process.env.MARKET_ALWAYS_OPEN === "true" && process.env.NODE_ENV !== "production") {
+  if (
+    process.env.MARKET_ALWAYS_OPEN === "true" &&
+    process.env.NODE_ENV !== "production"
+  ) {
     return next();
   }
   const status = await getMarketStatus();
