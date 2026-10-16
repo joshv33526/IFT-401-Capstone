@@ -3,9 +3,14 @@ const form = document.getElementById("loginForm");
 const msg = document.getElementById("loginMessage");
 const button = form.querySelector("button");
 
-// If currently logged in = straight to the dashboard
-fetch("/api/auth/me").then((res) => {
-  if (res.ok) window.location.href = "dashboard.html";
+// Admins go to the admin console, everyone else to the dashboard.
+function homePage(role) {
+  return role === "admin" ? "admin.html" : "dashboard.html";
+}
+
+// If currently logged in = straight to their home page
+fetch("/api/auth/me").then(async (res) => {
+  if (res.ok) window.location.href = homePage((await res.json()).role);
 });
 
 form.addEventListener("submit", async (e) => {
@@ -24,7 +29,7 @@ form.addEventListener("submit", async (e) => {
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      window.location.href = "dashboard.html";
+      window.location.href = homePage(data.role);
     } else if (data.details) {
       msg.textContent = data.details.map((d) => d.message).join(", ");
     } else {
