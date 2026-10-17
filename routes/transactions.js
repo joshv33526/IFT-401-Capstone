@@ -18,6 +18,7 @@ const TYPE_MAP = {
   sold: "SELL",
   deposit: "DEPOSIT",
   withdrawal: "WITHDRAWAL",
+  cancelled: "CANCELLED"
 };
 
 const filterRules = [
@@ -42,37 +43,41 @@ router.get("/", filterRules, validate, async (req, res) => {
     throw new HttpError(400, "Start date must be before end date");
   }
 
-  const where = ["ca.user_id = ?"];
-  const params = [req.session.userId];
+  const where = [];
+  const params = [req.session.userId, req.session.userId];
   if (type !== "all") {
-    where.push("ct.txn_type = ?");
+    where.push("history.type = ?");
     params.push(TYPE_MAP[type]);
   }
   if (fromSec !== null) {
-    where.push("ct.created_at >= FROM_UNIXTIME(?)");
+    where.push("history.event_at >= FROM_UNIXTIME(?)");
     params.push(fromSec);
   }
   if (toSec !== null) {
-    where.push("ct.created_at < FROM_UNIXTIME(?)");
+    where.push("history.event_at < FROM_UNIXTIME(?)");
     params.push(toSec);
   }
 
   const [rows] = await pool.query(
-    `SELECT ct.cash_txn_id                  AS id,
-                ct.txn_type                     AS type,
-                ct.amount,
-                ct.balance_after                AS balanceAfter,
-                UNIX_TIMESTAMP(ct.created_at)    AS ts,
-                s.ticker,
-                t.quantity,
-                t.price
-            FROM cash_transactions ct
-            JOIN cash_accounts ca       ON ca.cash_account_id = ct.cash_account_id
-            LEFT JOIN transactions t    ON t.order_id = ct.order_id
-            LEFT JOIN stocks s          ON s.stock_id = t.stock_id
-           WHERE ${where.join(" AND ")}
-           ORDER BY ct.created_at DESC, ct.cash_txn_id DESC
-           LIMIT ${MAX_ROWS}`,
+    `SELECT history.*, UNIX_TIMESTAMP(history.event_at) AS ts FROM (
+       SELECT ct.cash_txn_id AS id, ct.txn_type AS type, ct.amount,
+              ct.balance_after AS balanceAfter, ct.created_at AS event_at,
+              s.ticker, t.quantity, t.price, t.side, 'cash' AS source
+       FROM cash_transactions ct
+       JOIN cash_accounts ca ON ca.cash_account_id = ct.cash_account_id
+       LEFT JOIN transactions t ON t.order_id = ct.order_id
+       LEFT JOIN stocks s ON s.stock_id = t.stock_id
+       WHERE ca.user_id = ?
+       UNION ALL
+       SELECT o.order_id AS id, 'CANCELLED' AS type, 0 AS amount,
+              NULL AS balanceAfter, o.created_at AS event_at,
+              s.ticker, o.quantity, NULL AS price, o.side, 'order' AS source
+       FROM orders o JOIN stocks s ON s.stock_id = o.stock_id
+       WHERE o.user_id = ? AND o.status = 'CANCELLED'
+     ) AS history
+     ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
+     ORDER BY history.event_at DESC, history.id DESC, history.source DESC
+     LIMIT ${MAX_ROWS}`,
     params,
   );
 
@@ -82,12 +87,14 @@ router.get("/", filterRules, validate, async (req, res) => {
 
     transactions: rows.map((r) => ({
       id: r.id,
-      type: r.type, // BUY, SELL, DEPOSIT, WITHDRAWAL
+      type: r.type, // BUY, SELL, DEPOSIT, WITHDRAWAL, CANCELLED
+      side: r.side ?? null,
+      dateIsPlacement: r.type === "CANCELLED",
       date: new Date(Number(r.ts) * 1000).toISOString(),
       ticker: r.ticker ?? null, // null for deposits/withdrawals
       quantity: r.quantity ?? null,
       price: r.price ?? null, // money values are strings
-      amount: r.amount, // always positive
+      amount: r.amount, // zero for cancelled orders
       balanceAfter: r.balanceAfter,
     })),
   });
