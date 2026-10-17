@@ -41,6 +41,8 @@
                         type="text"
                         id="fullName"
                         name="fullName"
+                        maxlength="100"
+                        autocomplete="name"
                         placeholder="Enter your full name"
                         required
                     >
@@ -54,6 +56,8 @@
                         type="text"
                         id="username"
                         name="username"
+                        maxlength="50"
+                        autocomplete="username"
                         placeholder="Create a username"
                         required
                     >
@@ -67,6 +71,8 @@
                         type="email"
                         id="email"
                         name="email"
+                        maxlength="255"
+                        autocomplete="email"
                         placeholder="Enter your email address"
                         required
                     >
@@ -80,11 +86,16 @@
                         type="password"
                         id="password"
                         name="password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        aria-describedby="passwordHelp"
                         placeholder="Create a password"
                         required
                     >
                 </div>
 
+
+                <p id="passwordHelp">Use at least 8 characters.</p>
 
                 <div class="form-group">
                     <label for="confirmPassword">Confirm Password</label>
@@ -93,6 +104,8 @@
                         type="password"
                         id="confirmPassword"
                         name="confirmPassword"
+                        minlength="8"
+                        autocomplete="new-password"
                         placeholder="Re-enter your password"
                         required
                     >
@@ -106,7 +119,7 @@
             </form>
 
 
-            <p id="registerMessage"></p>
+            <p id="registerMessage" role="status" aria-live="polite"></p>
 
 
             <p>
@@ -136,7 +149,8 @@
     </footer>
 
 
-    <script src="register.js"></script>
+    <script src="js/register.js"></script>
+    <script src="js/session.js"></script>
 
 </body>
 </html>
