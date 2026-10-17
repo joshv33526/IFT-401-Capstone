@@ -16,7 +16,7 @@
     } catch {
       throw new Error(body === undefined
         ? "Cannot reach the server. Please try again."
-        : "Connection lost. Check transaction history before retrying; the request may have completed.");
+        : "Connection lost. Check pending orders and transaction history before retrying; the request may have completed.");
     }
     if (res.status === 401) {
       throw new Error("You can preview this page without logging in. Account data and trading require a logged-in account.");
@@ -25,7 +25,7 @@
     if (!res.ok) {
       throw new Error(data?.details?.map((d) => d.message).join(", ") || data?.error || "Request failed.");
     }
-    if (!data) throw new Error("Invalid server response. Check transaction history before retrying.");
+    if (!data) throw new Error("Invalid server response. Check pending orders and transaction history before retrying.");
     return data;
   }
 
@@ -76,7 +76,7 @@
     if (!data.orders.length) {
       const cell = document.createElement("td");
       cell.colSpan = 6;
-      cell.textContent = "No pending orders. New trades fill immediately.";
+      cell.textContent = "No pending orders.";
       const row = document.createElement("tr");
       row.append(cell);
       tbody.append(row);
@@ -89,12 +89,16 @@
         row.append(cell);
       }
       const cell = document.createElement("td");
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "view-button cancel-order-button";
-      button.dataset.orderId = order.orderId;
-      button.textContent = "Cancel";
-      cell.append(button);
+      for (const action of ["process", "cancel"]) {
+        if (action === "process" && order.side !== "BUY") continue;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "view-button";
+        button.dataset.orderId = order.orderId;
+        button.dataset.action = action;
+        button.textContent = action === "process" ? "Process" : "Cancel";
+        cell.append(button, document.createTextNode(" "));
+      }
       row.append(cell);
       tbody.append(row);
     }
@@ -125,12 +129,16 @@
       message.textContent = "Submitting order...";
       try {
         const trade = await request(`/api/trade/${side}`, { ticker, quantity });
-        message.textContent = `${side === "buy" ? "Bought" : "Sold"} ${trade.quantity} ${trade.ticker} shares at ${currency.format(Number(trade.price))}. Total: ${currency.format(Number(trade.total))}. Cash balance: ${currency.format(Number(trade.cashBalance))}. Order #${trade.orderId}.`;
+        message.textContent = side === "buy"
+          ? `Order #${trade.orderId} placed for ${trade.quantity} ${trade.ticker} shares. Process or cancel it below.`
+          : `Sold ${trade.quantity} ${trade.ticker} shares at ${currency.format(Number(trade.price))}. Total: ${currency.format(Number(trade.total))}. Cash balance: ${currency.format(Number(trade.cashBalance))}. Order #${trade.orderId}.`;
         el(`${side}Quantity`).value = "";
+        updateEstimate(side);
         try {
-          await loadStocks();
+          if (side === "buy") await loadOrders();
+          else await loadStocks();
         } catch {
-          message.textContent += " Trade completed, but account data could not refresh. Reload before trading again.";
+          message.textContent += " Order submitted, but page data could not refresh. Reload before trading again.";
         }
       } catch (err) {
         message.textContent = err.message;
@@ -141,17 +149,24 @@
     });
   }
 
-  el("pendingOrders").addEventListener("click", async (event) => {
+ el("pendingOrders").addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-order-id]");
     if (!button || busy) return;
     busy = true;
     updateButtons();
     const message = el("cancelMessage");
-    message.textContent = "Cancelling order...";
+    const action = button.dataset.action;
+    message.textContent = action === "process" ? "Processing order..." : "Cancelling order...";
     try {
-      await request(`/api/trade/orders/${encodeURIComponent(button.dataset.orderId)}/cancel`, {});
-      message.textContent = `Order #${button.dataset.orderId} cancelled.`;
+      const trade = await request(`/api/trade/orders/${encodeURIComponent(button.dataset.orderId)}/${action}`, {});
+      message.textContent = action === "process"
+        ? `Order #${trade.orderId} processed. Bought ${trade.quantity} ${trade.ticker} shares at ${currency.format(Number(trade.price))}. Total: ${currency.format(Number(trade.total))}. Cash balance: ${currency.format(Number(trade.cashBalance))}.`
+        : `Order #${button.dataset.orderId} cancelled.`;
       button.closest("tr").remove();
+      if (action === "process") {
+        try { await loadStocks(); }
+        catch { message.textContent += " Account data could not refresh. Reload before trading again."; }
+      }
     } catch (err) {
       message.textContent = err.message;
     } finally {
