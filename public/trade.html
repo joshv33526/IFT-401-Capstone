@@ -38,7 +38,7 @@
         <h1 class="page-title">Trade Stocks</h1>
 
         <p class="page-description">
-          Buy and sell available stocks or cancel a pending stock order.
+          Place buy orders, process or cancel pending orders, and sell available stocks.
         </p>
       </section>
 
@@ -146,63 +146,40 @@
 
       <!-- Cancel Order Section -->
       <section class="trade-card">
-        <h2>Cancel Pending Order</h2>
 
-        <p>
-          Select one of your pending stock orders to cancel it before execution.
-        </p>
+            <h2>Pending Orders</h2>
 
-        <div class="table-container">
-          <table class="stocks-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Ticker</th>
-                <th>Type</th>
-                <th>Shares</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+            <p>
+                Process a buy order at the current market price or cancel it. Cash and shares change only when processed.
+            </p>
 
-            <tbody id="pendingOrders">
-              <tr>
-                <td>1001</td>
-                <td>AAPL</td>
-                <td>BUY</td>
-                <td>5</td>
-                <td>Pending</td>
-                <td>
-                  <button
-                    class="view-button cancel-order-button"
-                    data-order-id="1001"
-                  >
-                    Cancel
-                  </button>
-                </td>
-              </tr>
 
-              <tr>
-                <td>1002</td>
-                <td>NVDA</td>
-                <td>SELL</td>
-                <td>3</td>
-                <td>Pending</td>
-                <td>
-                  <button
-                    class="view-button cancel-order-button"
-                    data-order-id="1002"
-                  >
-                    Cancel
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <div class="table-container">
 
-        <p id="cancelMessage"></p>
-      </section>
+                <table class="stocks-table">
+
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Ticker</th>
+                            <th>Type</th>
+                            <th>Shares</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="pendingOrders">
+                        <tr><td colspan="6">Loading pending orders...</td></tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <p id="cancelMessage" role="status"></p>
+
+        </section>
     </main>
 
     <!-- Footer -->
