@@ -45,6 +45,7 @@ app.get("/api/health/db", async (req, res) => {
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/cash", require("./routes/cash"));
 app.use("/api/trade", require("./routes/trade"));
+app.use("/api/portfolio", require("./routes/portfolio"));
 app.use("/api/market", require("./routes/market"));
 app.use("/api/transactions", require("./routes/transactions"));
 app.use("/api/admin", require("./routes/admin"));
