@@ -53,18 +53,27 @@ async function recordTrade(
     priceCents,
     totalCents,
     newBalanceCents,
+    orderId,
   },
 ) {
-  const [order] = await conn.query(
-    `INSERT INTO orders (user_id, stock_id, side, quantity, price, status)
-     VALUES (?, ?, ?, ?, ?, 'FILLED')`,
-    [userId, stock.stock_id, side, quantity, fromCents(priceCents)],
-  );
+  if (orderId) {
+    await conn.query(
+      "UPDATE orders SET status = 'FILLED', price = ? WHERE order_id = ?",
+      [fromCents(priceCents), orderId],
+    );
+  } else {
+    const [order] = await conn.query(
+      `INSERT INTO orders (user_id, stock_id, side, quantity, price, status)
+       VALUES (?, ?, ?, ?, ?, 'FILLED')`,
+      [userId, stock.stock_id, side, quantity, fromCents(priceCents)],
+    );
+    orderId = order.insertId;
+  }
   await conn.query(
     `INSERT INTO transactions (order_id, user_id, stock_id, side, quantity, price, total)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [
-      order.insertId,
+      orderId,
       userId,
       stock.stock_id,
       side,
@@ -81,11 +90,11 @@ async function recordTrade(
       side,
       fromCents(totalCents),
       fromCents(newBalanceCents),
-      order.insertId,
+      orderId,
     ],
   );
   return {
-    orderId: order.insertId,
+    orderId,
     side,
     ticker: stock.ticker,
     quantity,
@@ -95,19 +104,77 @@ async function recordTrade(
   };
 }
 
-// POST /api/trade/buy
+// Account-aware quotes used by both trade forms.
+router.get("/stocks", requireLogin, async (req, res) => {
+  const [stocks] = await pool.query(
+    `SELECT s.ticker, s.company_name AS companyName, s.current_price AS price,
+            COALESCE(h.quantity, 0) AS sharesOwned
+     FROM stocks s LEFT JOIN holdings h
+       ON h.stock_id = s.stock_id AND h.user_id = ? ORDER BY s.ticker`,
+    [req.session.userId],
+  );
+  res.json({ stocks });
+});
+
+router.get("/orders/pending", requireLogin, async (req, res) => {
+  const [orders] = await pool.query(
+    `SELECT o.order_id AS orderId, s.ticker, o.side, o.quantity, o.status
+     FROM orders o JOIN stocks s ON s.stock_id = o.stock_id
+     WHERE o.user_id = ? AND o.status = 'PENDING' ORDER BY o.order_id DESC`,
+    [req.session.userId],
+  );
+  res.json({ orders });
+});
+
+// Placement does not reserve cash or shares; funds are checked at processing.
+router.post("/buy", requireLogin, tradeRules, validate, async (req, res) => {
+  const { ticker, quantity } = req.body;
+  const result = await withTransaction(async (conn) => {
+    const [[stock]] = await conn.query(
+      "SELECT stock_id, current_price FROM stocks WHERE ticker = ? FOR SHARE", [ticker],
+    );
+    if (!stock) throw new HttpError(404, `Stock ${ticker} not found`);
+    const [order] = await conn.query(
+      `INSERT INTO orders (user_id, stock_id, side, quantity, price, status)
+       VALUES (?, ?, 'BUY', ?, ?, 'PENDING')`,
+      [req.session.userId, stock.stock_id, quantity, stock.current_price],
+    );
+    return { orderId: order.insertId, ticker, quantity, status: "PENDING" };
+  });
+  res.status(201).json(result);
+});
+
+const orderRules = [param("orderId").matches(/^[1-9][0-9]{0,19}$/).withMessage("Invalid order ID")];
+
+async function lockPendingOrder(conn, orderId, userId) {
+  const [[order]] = await conn.query(
+    "SELECT order_id, stock_id, side, quantity, status FROM orders WHERE order_id = ? AND user_id = ? FOR UPDATE",
+    [orderId, userId],
+  );
+  if (!order) throw new HttpError(404, "Order not found");
+  if (order.status !== "PENDING") throw new HttpError(409, "Order is no longer pending");
+  return order;
+}
+
+router.post("/orders/:orderId/cancel", requireLogin, orderRules, validate, async (req, res) => {
+  await withTransaction(async (conn) => {
+    await lockPendingOrder(conn, req.params.orderId, req.session.userId);
+    await conn.query("UPDATE orders SET status = 'CANCELLED' WHERE order_id = ?", [req.params.orderId]);
+  });
+  res.json({ orderId: req.params.orderId, status: "CANCELLED" });
+});
+
 router.post(
-  "/buy",
-  requireLogin,
-  requireMarketOpen,
-  tradeRules,
-  validate,
+  "/orders/:orderId/process", requireLogin, requireMarketOpen, orderRules, validate,
   async (req, res) => {
     const userId = req.session.userId;
-    const { ticker, quantity } = req.body;
-
     const result = await withTransaction(async (conn) => {
-      const { stock, acct } = await lockStockAndCash(conn, ticker, userId);
+      const order = await lockPendingOrder(conn, req.params.orderId, userId);
+      if (order.side !== "BUY") throw new HttpError(400, "Only pending buy orders can be processed");
+      const [[quote]] = await conn.query("SELECT ticker FROM stocks WHERE stock_id = ?", [order.stock_id]);
+      if (!quote) throw new HttpError(404, "Stock not found");
+      const { stock, acct } = await lockStockAndCash(conn, quote.ticker, userId);
+      const quantity = order.quantity;
 
       const priceCents = toCents(stock.current_price);
       const totalCents = priceCents * quantity;
@@ -134,6 +201,7 @@ router.post(
       );
 
       return recordTrade(conn, {
+        orderId: order.order_id,
         userId,
         stock,
         acct,
@@ -205,81 +273,6 @@ router.post(
     });
 
     res.status(201).json(result);
-  },
-);
-
-// GET /api/trade/stocks
-// Every stock with its current price and how many shares the logged-in user
-// owns. Fills the buy/sell dropdowns on trade.html.
-router.get("/stocks", requireLogin, async (req, res) => {
-  const [rows] = await pool.query(
-    `SELECT s.ticker, s.company_name, s.current_price,
-            COALESCE(h.quantity, 0) AS shares_owned
-     FROM stocks s
-     LEFT JOIN holdings h ON h.stock_id = s.stock_id AND h.user_id = ?
-     ORDER BY s.ticker`,
-    [req.session.userId],
-  );
-  res.json({
-    stocks: rows.map((r) => ({
-      ticker: r.ticker,
-      companyName: r.company_name,
-      price: r.current_price,
-      sharesOwned: Number(r.shares_owned),
-    })),
-  });
-});
-
-// GET /api/trade/orders/pending
-// The logged-in user's PENDING orders (shown in the Cancel Pending Order table).
-router.get("/orders/pending", requireLogin, async (req, res) => {
-  const [rows] = await pool.query(
-    `SELECT o.order_id, s.ticker, o.side, o.quantity, o.status
-     FROM orders o
-     JOIN stocks s ON s.stock_id = o.stock_id
-     WHERE o.user_id = ? AND o.status = 'PENDING'
-     ORDER BY o.order_id`,
-    [req.session.userId],
-  );
-  res.json({
-    orders: rows.map((r) => ({
-      orderId: r.order_id,
-      ticker: r.ticker,
-      side: r.side,
-      quantity: r.quantity,
-      status: r.status,
-    })),
-  });
-});
-
-// POST /api/trade/orders/:orderId/cancel
-// Cancels one of the logged-in user's own PENDING orders. A pending order has
-// not moved any cash or shares yet, so only the order status changes.
-router.post(
-  "/orders/:orderId/cancel",
-  requireLogin,
-  param("orderId").isInt({ min: 1 }).withMessage("Invalid order id"),
-  validate,
-  async (req, res) => {
-    const userId = req.session.userId;
-    const orderId = Number(req.params.orderId);
-
-    await withTransaction(async (conn) => {
-      const [[order]] = await conn.query(
-        "SELECT order_id, status FROM orders WHERE order_id = ? AND user_id = ? FOR UPDATE",
-        [orderId, userId],
-      );
-      if (!order) throw new HttpError(404, "Order not found");
-      if (order.status !== "PENDING") {
-        throw new HttpError(400, "Only pending orders can be cancelled");
-      }
-      await conn.query(
-        "UPDATE orders SET status = 'CANCELLED' WHERE order_id = ?",
-        [orderId],
-      );
-    });
-
-    res.json({ orderId, status: "CANCELLED" });
   },
 );
 
