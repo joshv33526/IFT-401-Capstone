@@ -32,6 +32,7 @@ const timeFormat = new Intl.DateTimeFormat("en-US", {
 // How the database types are shown. "sign" decides +/- on the Amount column:
 // money coming IN (deposit, sale) is positive, money going OUT is negative.
 const TYPES = {
+  CANCELLED: { label: "Cancelled", badge: "", sign: 0 },
   BUY: { label: "Bought", badge: "type-bought", sign: -1 },
   SELL: { label: "Sold", badge: "type-sold", sign: 1 },
   DEPOSIT: { label: "Deposit", badge: "type-deposit", sign: 1 },
@@ -55,6 +56,7 @@ function cell(text, className = "") {
 function buildRow(txn) {
   const info = TYPES[txn.type] || { label: txn.type, badge: "", sign: 1 };
   const isTrade = txn.ticker !== null;
+  const cancelled = txn.type === "CANCELLED";
   const row = document.createElement("tr");
 
   // Date with time shown on hover over.
@@ -65,12 +67,16 @@ function buildRow(txn) {
   time.textContent = dateFormat.format(when);
   time.title = timeFormat.format(when);
   dateCell.append(time);
+  if (txn.dateIsPlacement) {
+    dateCell.append(document.createTextNode(" (placed)"));
+    time.title += " — order placement time; cancellation time is not recorded";
+  }
 
   // Type badge
   const typeCell = document.createElement("td");
   const badge = document.createElement("span");
   badge.className = `type-badge ${info.badge}`;
-  badge.textContent = info.label;
+  badge.textContent = cancelled ? `Cancelled ${txn.side === "SELL" ? "Sell" : "Buy"}` : info.label;
   typeCell.append(badge);
 
   // Deposits and withdrawals have no ticker, quantity or price.
@@ -84,9 +90,9 @@ function buildRow(txn) {
     isTrade
       ? cell(txn.quantity.toLocaleString("en-US"), "numeric")
       : cell("-", "numeric muted"),
-    isTrade ? cell(money(txn.price), "numeric") : cell("-", "numeric muted"),
-    cell(amountText, `numeric ${signed >= 0 ? "positive" : "negative"}`),
-    cell(money(txn.balanceAfter), "numeric"),
+    isTrade && !cancelled ? cell(money(txn.price), "numeric") : cell("—", "numeric muted"),
+    cancelled ? cell(money(0), "numeric muted") : cell(amountText, `numeric ${signed >= 0 ? "positive" : "negative"}`),
+    txn.balanceAfter == null ? cell("—", "numeric muted") : cell(money(txn.balanceAfter), "numeric"),
   );
   return row;
 }
