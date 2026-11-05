@@ -11,7 +11,9 @@
   --page-width: 1200px;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -25,12 +27,32 @@ body {
   line-height: 1.5;
 }
 
-a { color: var(--nav-color); }
-button, input, select, textarea { font: inherit; }
-button, a, input { -webkit-tap-highlight-color: transparent; }
-button { cursor: pointer; }
-button:disabled { opacity: 0.55; cursor: not-allowed; }
-img, svg { max-width: 100%; vertical-align: middle; }
+a {
+  color: var(--nav-color);
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+img,
+svg {
+  max-width: 100%;
+  vertical-align: middle;
+}
 
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: 3px solid #b56a00;
@@ -61,7 +83,9 @@ img, svg { max-width: 100%; vertical-align: middle; }
   text-decoration: none;
 }
 
-.navbar > nav { min-width: 0; }
+.navbar > nav {
+  min-width: 0;
+}
 .nav-links {
   display: flex;
   flex-wrap: wrap;
@@ -86,12 +110,31 @@ img, svg { max-width: 100%; vertical-align: middle; }
 .nav-links a:hover,
 .nav-links a:focus-visible,
 .nav-links a[aria-current="page"],
-.nav-links a.active { background: var(--nav-hover); }
-.nav-links a[aria-current="page"] { box-shadow: inset 0 -3px #fff; }
-.nav-icon { width: 30px; height: 30px; flex-shrink: 0; }
-.user-area { display: flex; align-items: center; gap: 18px; margin-left: auto; }
-.welcome-message { margin: 0; font-size: 0.9rem; line-height: 1.4; }
-.welcome-message span { display: block; }
+.nav-links a.active {
+  background: var(--nav-hover);
+}
+.nav-links a[aria-current="page"] {
+  box-shadow: inset 0 -3px #fff;
+}
+.nav-icon {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-left: auto;
+}
+.welcome-message {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.welcome-message span {
+  display: block;
+}
 .logout-button {
   display: inline-flex;
   align-items: center;
@@ -104,8 +147,12 @@ img, svg { max-width: 100%; vertical-align: middle; }
   color: #fff;
   text-decoration: none;
 }
-.logout-button:hover { background: var(--nav-hover); }
-.site-header :focus-visible { outline-color: #fff; }
+.logout-button:hover {
+  background: var(--nav-hover);
+}
+.site-header :focus-visible {
+  outline-color: #fff;
+}
 
 /* Main heading/search on the left; market and portfolio totals on the right. */
 .main-content {
@@ -120,15 +167,26 @@ img, svg { max-width: 100%; vertical-align: middle; }
   align-items: start;
   gap: 48px;
 }
-.page-intro { min-width: 0; }
-.page-intro h1, .page-title {
+.page-intro {
+  min-width: 0;
+}
+.page-intro h1,
+.page-title {
   margin: 0 0 2px;
   font-size: clamp(1.5rem, 2.6vw, 1.9rem);
   line-height: 1.25;
   font-weight: 700;
 }
-.page-description { margin: 4px 0 12px; color: var(--muted-color); font-size: 0.9rem; }
-.search-bar { display: flex; align-items: stretch; gap: 8px; }
+.page-description {
+  margin: 4px 0 12px;
+  color: var(--muted-color);
+  font-size: 0.9rem;
+}
+.search-bar {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
 .search-input {
   flex: 1;
   min-width: 0;
@@ -140,8 +198,12 @@ img, svg { max-width: 100%; vertical-align: middle; }
   background: #f7f7fc;
   color: var(--text-color);
 }
-.search-input::placeholder { color: var(--muted-color); opacity: 1; }
-.search-button, .btn-primary {
+.search-input::placeholder {
+  color: var(--muted-color);
+  opacity: 1;
+}
+.search-button,
+.btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -153,10 +215,24 @@ img, svg { max-width: 100%; vertical-align: middle; }
   color: #fff;
   text-decoration: none;
 }
-.search-button:hover, .btn-primary:hover { background: var(--nav-hover); }
-.summary-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.market-summary, .portfolio-summary { text-align: center; min-width: 0; }
-.summary-label { margin: 0 0 12px; font-size: 0.9rem; }
+.search-button:hover,
+.btn-primary:hover {
+  background: var(--nav-hover);
+}
+.summary-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.market-summary,
+.portfolio-summary {
+  text-align: center;
+  min-width: 0;
+}
+.summary-label {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+}
 .summary-value {
   margin: 0;
   font-size: clamp(1.35rem, 2.5vw, 1.9rem);
@@ -167,20 +243,69 @@ img, svg { max-width: 100%; vertical-align: middle; }
 }
 
 /* Wrap the semantic HTML table to keep horizontal scrolling local on mobile. */
-.table-container { margin-top: 64px; max-width: 100%; overflow-x: auto; }
-.stocks-table { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 0.9rem; }
-.stocks-table caption { padding: 0 0 12px; text-align: left; color: var(--muted-color); }
-.stocks-table th, .stocks-table td { padding: 12px 24px; text-align: left; vertical-align: middle; }
-.stocks-table th { padding-bottom: 20px; font-weight: 400; color: #34363c; }
-.stocks-table td { font-weight: 600; border-bottom: 1px solid #f1f2f5; }
-.stocks-table tbody tr:last-child td { border-bottom: 0; }
-.stocks-table tbody tr:hover { background: #f8f9fc; }
-.stocks-table td:first-child { white-space: nowrap; }
-.stocks-table th:last-child, .stocks-table td:last-child { text-align: center; }
-.stocks-table .numeric { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.positive, .change-positive { color: var(--positive-color); font-variant-numeric: tabular-nums; }
-.negative, .change-negative { color: var(--negative-color); font-variant-numeric: tabular-nums; }
-.neutral, .change-neutral { color: var(--muted-color); }
+.table-container {
+  margin-top: 64px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.stocks-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.stocks-table caption {
+  padding: 0 0 12px;
+  text-align: left;
+  color: var(--muted-color);
+}
+.stocks-table th,
+.stocks-table td {
+  padding: 12px 24px;
+  text-align: left;
+  vertical-align: middle;
+}
+.stocks-table th {
+  padding-bottom: 20px;
+  font-weight: 400;
+  color: #34363c;
+}
+.stocks-table td {
+  font-weight: 600;
+  border-bottom: 1px solid #f1f2f5;
+}
+.stocks-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.stocks-table tbody tr:hover {
+  background: #f8f9fc;
+}
+.stocks-table td:first-child {
+  white-space: nowrap;
+}
+.stocks-table th:last-child,
+.stocks-table td:last-child {
+  text-align: center;
+}
+.stocks-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.positive,
+.change-positive {
+  color: var(--positive-color);
+  font-variant-numeric: tabular-nums;
+}
+.negative,
+.change-negative {
+  color: var(--negative-color);
+  font-variant-numeric: tabular-nums;
+}
+.neutral,
+.change-neutral {
+  color: var(--muted-color);
+}
 .view-button {
   display: inline-flex;
   align-items: center;
@@ -195,8 +320,14 @@ img, svg { max-width: 100%; vertical-align: middle; }
   font-weight: 500;
   text-decoration: none;
 }
-.view-button:hover { background: var(--view-hover); }
-.empty-state { padding: 32px; text-align: center; color: var(--muted-color); }
+.view-button:hover {
+  background: var(--view-hover);
+}
+.empty-state {
+  padding: 32px;
+  text-align: center;
+  color: var(--muted-color);
+}
 
 /* Centered, understated footer. */
 .site-footer {
@@ -208,11 +339,29 @@ img, svg { max-width: 100%; vertical-align: middle; }
   text-align: center;
   font-size: 0.875rem;
 }
-.site-footer p { margin: 8px 0; }
-.footer-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0; }
-.footer-links a { padding: 0 12px; margin: 6px 0; color: inherit; text-decoration: none; }
-.footer-links a + a { border-left: 1px solid #bfc0c6; }
-.footer-links a:hover { color: var(--nav-color); text-decoration: underline; }
+.site-footer p {
+  margin: 8px 0;
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+}
+.footer-links a {
+  padding: 0 12px;
+  margin: 6px 0;
+  color: inherit;
+  text-decoration: none;
+}
+.footer-links a + a {
+  border-left: 1px solid #bfc0c6;
+}
+.footer-links a:hover {
+  color: var(--nav-color);
+  text-decoration: underline;
+}
 
 /* Shared form classes, compatible with the earlier login page. */
 .login-container {
@@ -221,10 +370,20 @@ img, svg { max-width: 100%; vertical-align: middle; }
   padding: 28px;
   border: 1px solid var(--border-color);
 }
-.login-container h2 { margin-top: 0; }
-.form-group { margin-bottom: 18px; }
-.form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
-.form-group input, .form-group select, .form-group textarea {
+.login-container h2 {
+  margin-top: 0;
+}
+.form-group {
+  margin-bottom: 18px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
@@ -241,7 +400,9 @@ img, svg { max-width: 100%; vertical-align: middle; }
   background: var(--nav-color);
   color: #fff;
 }
-.login-container button[type="submit"]:hover { background: var(--nav-hover); }
+.login-container button[type="submit"]:hover {
+  background: var(--nav-hover);
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -257,69 +418,134 @@ img, svg { max-width: 100%; vertical-align: middle; }
 /* Trade Page */
 
 .trade-card {
-    margin-top: 32px;
-    padding: 28px;
-    border: 1px solid var(--border-color);
-    background: #ffffff;
+  margin-top: 32px;
+  padding: 28px;
+  border: 1px solid var(--border-color);
+  background: #ffffff;
 }
 
 .trade-card h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
+  margin-top: 0;
+  margin-bottom: 20px;
 }
 
 .trade-card .form-group {
-    max-width: 500px;
+  max-width: 500px;
 }
 
 .trade-card select,
 .trade-card input {
-    width: 100%;
-    min-height: 44px;
-    padding: 10px 12px;
-    border: 1px solid #a3a5b0;
-    background: #ffffff;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #a3a5b0;
+  background: #ffffff;
 }
 
 .trade-card input[readonly] {
-    background: #f5f5f7;
+  background: #f5f5f7;
 }
 
 .cancel-order-button {
-    background: #d5263b;
-    color: white;
+  background: #d5263b;
+  color: white;
 }
 
 .cancel-order-button:hover {
-    background: #b51f31;
+  background: #b51f31;
 }
 
 @media (max-width: 960px) {
-  .navbar { gap: 12px; }
-  .navbar > nav { order: 3; flex-basis: 100%; }
-  .nav-links { justify-content: center; }
-  .page-header { grid-template-columns: 1fr; gap: 28px; }
-  .summary-panel { max-width: 460px; }
-  .market-summary, .portfolio-summary { text-align: left; }
-  .main-content { margin-top: 40px; }
-  .table-container { margin-top: 36px; }
+  .navbar {
+    gap: 12px;
+  }
+  .navbar > nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .nav-links {
+    justify-content: center;
+  }
+  .page-header {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .summary-panel {
+    max-width: 460px;
+  }
+  .market-summary,
+  .portfolio-summary {
+    text-align: left;
+  }
+  .main-content {
+    margin-top: 40px;
+  }
+  .table-container {
+    margin-top: 36px;
+  }
 }
 
 @media (max-width: 560px) {
-  .site-header { width: 100%; margin-top: 0; }
-  .navbar { padding: 14px 16px; }
-  .brand { flex-basis: 100%; }
-  .user-area { width: 100%; margin-left: 0; justify-content: space-between; }
-  .nav-links { gap: 4px; justify-content: flex-start; }
-  .nav-links a { padding: 6px 8px; font-size: 0.875rem; }
-  .nav-icon { width: 22px; height: 22px; }
-  .main-content { width: calc(100% - 32px); margin-top: 28px; }
-  .search-bar { flex-direction: column; }
-  .search-button { width: 100%; }
-  .summary-panel { gap: 16px; }
-  .summary-label { font-size: 0.8rem; margin-bottom: 6px; }
-  .stocks-table th, .stocks-table td { padding: 12px 16px; }
-  .site-footer { padding: 16px 8px; }
-  .footer-links a { padding-inline: 9px; }
+  .site-header {
+    width: 100%;
+    margin-top: 0;
+  }
+  .navbar {
+    padding: 14px 16px;
+  }
+  .brand {
+    flex-basis: 100%;
+  }
+  .user-area {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+  .nav-links {
+    gap: 4px;
+    justify-content: flex-start;
+  }
+  .nav-links a {
+    padding: 6px 8px;
+    font-size: 0.875rem;
+  }
+  .nav-icon {
+    width: 22px;
+    height: 22px;
+  }
+  .main-content {
+    width: calc(100% - 32px);
+    margin-top: 28px;
+  }
+  .search-bar {
+    flex-direction: column;
+  }
+  .search-button {
+    width: 100%;
+  }
+  .summary-panel {
+    gap: 16px;
+  }
+  .summary-label {
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+  }
+  .stocks-table th,
+  .stocks-table td {
+    padding: 12px 16px;
+  }
+  .site-footer {
+    padding: 16px 8px;
+  }
+  .footer-links a {
+    padding-inline: 9px;
+  }
 }
 
+/* Dashboard stock table now has 10 columns (open, high, low, volume, market cap),
+so the side padding is tighter to make it fir on a normal screen */
+.stocks-table th,
+.stocks-table td {
+  padding-left: 14px;
+  padding-right: 14px;
+}

@@ -40,6 +40,10 @@ CREATE TABLE stocks (
   volume         INT UNSIGNED NOT NULL,           -- set by admin at creation
   initial_price  DECIMAL(12,2) NOT NULL,
   current_price  DECIMAL(12,2) NOT NULL,
+  open_price     DECIMAL(12,2) NULL,              -- price at the start of today's trading (set by price generator)
+  day_high       DECIMAL(12,2) NULL,              -- highest price today
+  day_low        DECIMAL(12,2) NULL,              -- lowest price today
+  price_date     DATE NULL,                       -- market date those three values belong to
   created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT chk_stock_prices_pos CHECK (initial_price > 0 AND current_price > 0)
 );

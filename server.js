@@ -46,6 +46,7 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/cash", require("./routes/cash"));
 app.use("/api/trade", require("./routes/trade"));
 app.use("/api/portfolio", require("./routes/portfolio"));
+app.use("/api/stocks", require("./routes/stocks"));
 app.use("/api/market", require("./routes/market"));
 app.use("/api/transactions", require("./routes/transactions"));
 app.use("/api/admin", require("./routes/admin"));
@@ -66,3 +67,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`),
 );
+
+// Random stock price generator: moves prices a little every few seconds while
+// the market is open. Turn off with PRICE_GENERATOR=off in .env.
+require("./lib/priceGenerator").start();
