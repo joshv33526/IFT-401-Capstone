@@ -2,6 +2,9 @@
 // It will display the user's name, and wires the Log out button to work
 
 (async () => {
+  const page = window.location.pathname.split("/").pop();
+  if (page === "register.html" || page === "login.html") return;
+
   try {
     const res = await fetch("/api/auth/me");
     if (!res.ok) {
