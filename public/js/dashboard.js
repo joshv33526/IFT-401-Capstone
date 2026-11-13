@@ -72,13 +72,55 @@
       render((await res.json()).stocks);
     } catch {
       // Keep showing last good table if a refresh fails; only say so so first load.
-      if (body.querySelector("[data-loading"))
+      if (body.querySelector("[data-loading]"))
         message("Could not load stocks. Please refresh the page.");
     }
   }
 
-  load();
+// Market status box" "Open" (green) or "Closed" (red)
+// Hovering over it shows the market hours, or why it is closed (holiday, weekend).
+  const marketStatus = document.getElementById("marketStatus");
+
+  async function loadMarketStatus() {
+    if (!marketStatus) return;
+    try {
+      const res = await fetch("/api/market/status");
+      if (!res.ok) throw new Error("Request failed");
+      const status = await res.json();
+      marketStatus.textContent = status.open ? "Open" : "Closed";
+      marketStatus.className = `summary-value ${status.open ? "change-positive" : "change-negative"}`;
+      marketStatus.title = status.reason;
+    } catch {
+      marketStatus.textContent = "Unavailable";
+      marketStatus.className = "summary-value";
+      marketStatus.title = "";
+    }
+  }
+
+  const portfolioValue = document.getElementById("portfolioValue");
+
+  async function loadPortfolioValue() {
+    if (!portfolioValue) return;
+    try {
+      const res = await fetch("/api/portfolio");
+      if (res.status === 401) return; // session.js sends the user to login page
+      if (!res.ok) throw new Error("Request failed");
+      portfolioValue.textContent = money.format(
+        Number((await res.json()).portfolioValue),
+      );
+    } catch {
+      portfolioValue.textContent = "Unavailable";
+    }
+  }
+
+  function refreshAll() {
+    load();
+    loadMarketStatus();
+    loadPortfolioValue();
+  }
+
+  refreshAll();
   setInterval(() => {
-    if (!document.hidden) load(); // do not poll while the tab is in the background
+    if (!document.hidden) refreshAll();
   }, REFRESH_MS);
 })();
