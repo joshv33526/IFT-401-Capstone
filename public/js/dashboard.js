@@ -21,7 +21,7 @@
   function message(text) {
     const tr = document.createElement("tr");
     const td = cell(text);
-    td.colSpan = 10;
+    td.colSpan = 9;
     tr.appendChild(td);
     body.replaceChildren(tr);
   }
@@ -52,24 +52,43 @@
       tr.appendChild(cell(whole.format(Number(s.volume)), "numeric"));
       tr.appendChild(cell(money.format(Number(s.marketCap)), "numeric"));
 
-      const action = document.createElement("td");
-      const button = document.createElement("button");
-      button.className = "view-button";
-      button.type = "button";
-      button.textContent = "View";
-      action.appendChild(button);
-      tr.appendChild(action);
       return tr;
     });
     body.replaceChildren(...rows);
   }
+
+// Search box: shows only the stocks whose ticker or company name contains
+// what was typed (not case sensitive). Empty box displays all stocks.
+// The filter is also kept when the table refreshes itself every few seconds.
+  let allStocks = [];
+  const searchInput = document.getElementById("stockSearch");
+  const searchButton = document.getElementById("searchButton");
+
+  function applyFilter() {
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
+    const matches = query
+      ? allStocks.filter(
+        (s) =>
+          s.ticker.toLowerCase().includes(query) ||
+          s.companyName.toLowerCase().includes(query),
+      )
+    : allStocks;
+  if (query && allStocks.length && !matches.length) {
+    return message(`No stocks match "${searchInput.value.trim()}".`);
+  }
+  render(matches);
+  }
+
+  if (searchInput) searchInput.addEventListener("input", applyFilter);
+  if (searchButton) searchButton.addEventListener("click", applyFilter);
 
   async function load() {
     try {
       const res = await fetch("/api/stocks");
       if (res.status === 401) return; // session.js sends the user to login page
       if (!res.ok) throw new Error("Request failed");
-      render((await res.json()).stocks);
+      allStocks = (await res.json()).stocks;
+      applyFilter();
     } catch {
       // Keep showing last good table if a refresh fails; only say so so first load.
       if (body.querySelector("[data-loading]"))
