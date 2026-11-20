@@ -1,174 +1,363 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Portfolio | Easy Stock Solutions</title>
+<head>
 
-    <!-- Main website styles -->
-    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
 
-    <!-- Portfolio styles -->
-    <link rel="stylesheet" href="portfolio.css" />
-  </head>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <body>
-    <!-- Top Navigation -->
+    <title>
+        Portfolio | Easy Stock Solutions
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="portfolio.css"
+    >
+
+</head>
+
+
+<body>
+
+
     <header class="site-header">
-      <div class="navbar">
-        <a class="brand" href="dashboard.html"> Easy Stock Solutions </a>
 
-        <nav aria-label="Main navigation">
-          <ul class="nav-links">
-            <li>
-              <a href="dashboard.html"> Dashboard </a>
-            </li>
+        <div class="navbar">
 
-            <li>
-              <a href="trade.html"> Trade </a>
-            </li>
 
-            <li>
-              <a href="portfolio.html" aria-current="page"> Portfolio </a>
-            </li>
+            <a
+                class="brand"
+                href="dashboard.html"
+            >
+                Easy Stock Solutions
+            </a>
 
-            <li>
-              <a href="transactions.html"> History </a>
-            </li>
-          </ul>
-        </nav>
 
-        <div class="user-area">
-          <p class="welcome-message">Welcome, Josh</p>
+            <nav aria-label="Main navigation">
 
-          <a class="logout-button" href="login.html"> Log Out </a>
+                <ul class="nav-links">
+
+                    <li>
+                        <a href="dashboard.html">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="trade.html">
+                            Trade
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="portfolio.html"
+                            aria-current="page"
+                        >
+                            Portfolio
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="transactions.html">
+                            History
+                        </a>
+                    </li>
+
+                </ul>
+
+            </nav>
+
+
+            <div class="user-area">
+
+                <p class="welcome-message">
+                    Welcome
+                </p>
+
+                <a
+                    class="logout-button"
+                    href="login.html"
+                >
+                    Log Out
+                </a>
+
+            </div>
+
         </div>
-      </div>
+
     </header>
 
-    <!-- Main Content -->
+
+
     <main class="main-content">
-      <!-- Portfolio Header -->
-      <section class="portfolio-header">
-        <div>
-          <h1 class="page-title">My Portfolio</h1>
 
-          <p class="page-description">
-            View your stock holdings, cash balance, and investment performance.
-          </p>
-        </div>
 
-        <!-- Portfolio Stats -->
-        <div class="portfolio-stats">
-          <div class="stat-box">
-            <p class="summary-label">Portfolio Value</p>
+        <section class="portfolio-header">
 
-            <p class="summary-value" id="portfolioValue">$0.00</p>
-          </div>
 
-          <div class="stat-box">
-            <p class="summary-label">Total Gain/Loss</p>
+            <div>
 
-            <p class="summary-value" id="totalGainLoss">$0.00</p>
-          </div>
+                <h1 class="page-title">
+                    My Portfolio
+                </h1>
 
-          <div class="stat-box">
-            <p class="summary-label">Cash Available</p>
+                <p class="page-description">
+                    View your stock holdings, cash balance,
+                    and investment performance.
+                </p>
 
-            <p class="summary-value" id="cashAvailable">$0.00</p>
-          </div>
-        </div>
-      </section>
+            </div>
 
-      <!-- ==================================================
-             CASH MANAGEMENT
-             THIS IS THE BUTTON THAT OPENS cash.html
-             ================================================== -->
 
-      <section class="cash-access">
-        <div class="cash-access-left">
-          <div class="cash-symbol">$</div>
+            <div class="portfolio-stats">
 
-          <div>
-            <h2>Cash Management</h2>
 
-            <p>Deposit or withdraw cash from your investment account.</p>
-          </div>
-        </div>
+                <div class="stat-box">
 
-        <a class="manage-cash-button" href="cash.html"> Manage Cash </a>
-      </section>
+                    <p class="summary-label">
+                        Portfolio Value
+                    </p>
 
-      <!-- Portfolio Buttons -->
-      <section class="portfolio-actions">
-        <a class="btn-primary" href="trade.html"> Trade Stocks </a>
+                    <p
+                        class="summary-value"
+                        id="portfolioValue"
+                    >
+                        $0.00
+                    </p>
 
-        <a class="secondary-button" href="transactions.html">
-          View Transaction History
-        </a>
+                </div>
 
-        <a class="secondary-button" href="dashboard.html">
-          Back to Dashboard
-        </a>
-      </section>
 
-      <!-- Current Holdings -->
-      <section
-        class="table-container"
-        aria-label="Current stock holdings"
-        tabindex="0"
-      >
-        <table class="stocks-table">
-          <caption>
-            Current Holdings
-          </caption>
+                <div class="stat-box">
 
-          <thead>
-            <tr>
-              <th scope="col">Ticker</th>
+                    <p class="summary-label">
+                        Total Gain/Loss
+                    </p>
 
-              <th scope="col">Company</th>
+                    <p
+                        class="summary-value"
+                        id="totalGainLoss"
+                    >
+                        -
+                    </p>
 
-              <th scope="col">Shares</th>
+                </div>
 
-              <th scope="col">Average Price</th>
 
-              <th scope="col">Current Price</th>
+                <div class="stat-box">
 
-              <th scope="col">Gain/Loss</th>
+                    <p class="summary-label">
+                        Cash Available
+                    </p>
 
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
+                    <p
+                        class="summary-value"
+                        id="portfolioCash"
+                    >
+                        $0.00
+                    </p>
 
-          <tbody id="holdingsBody">
-            <tr>
-              <td colspan="7">Loading your holdings...</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <p
+            id="portfolioMessage"
+            class="portfolio-message"
+            role="status"
+            aria-live="polite"
+        ></p>
+
+
+
+        <!-- Cash Management -->
+
+        <section class="cash-access">
+
+
+            <div class="cash-access-left">
+
+                <div class="cash-symbol">
+                    $
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Cash Management
+                    </h2>
+
+                    <p>
+                        Deposit or withdraw cash from your investment account.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <a
+                class="manage-cash-button"
+                href="cash.html"
+            >
+                Manage Cash
+            </a>
+
+
+        </section>
+
+
+
+        <section class="portfolio-actions">
+
+
+            <a
+                class="btn-primary"
+                href="trade.html"
+            >
+                Trade Stocks
+            </a>
+
+
+            <a
+                class="secondary-button"
+                href="transactions.html"
+            >
+                View Transaction History
+            </a>
+
+
+            <a
+                class="secondary-button"
+                href="dashboard.html"
+            >
+                Back to Dashboard
+            </a>
+
+
+        </section>
+
+
+
+        <section
+            class="table-container"
+            aria-label="Current stock holdings"
+            tabindex="0"
+        >
+
+
+            <table class="stocks-table">
+
+
+                <caption>
+                    Current Holdings
+                </caption>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th scope="col">
+                            Ticker
+                        </th>
+
+                        <th scope="col">
+                            Company
+                        </th>
+
+                        <th scope="col">
+                            Shares
+                        </th>
+
+                        <th scope="col">
+                            Average Price
+                        </th>
+
+                        <th scope="col">
+                            Current Price
+                        </th>
+
+                        <th scope="col">
+                            Gain/Loss
+                        </th>
+
+                        <th scope="col">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="holdingsBody">
+
+                    <tr>
+
+                        <td colspan="7">
+                            Loading portfolio...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+
+            </table>
+
+        </section>
+
+
     </main>
 
-    <!-- Footer -->
+
+
     <footer class="site-footer">
-      <div class="footer-links">
-        <a href="#">About</a>
 
-        <a href="#">Help</a>
+        <div class="footer-links">
 
-        <a href="#">Contact</a>
+            <a href="#">About</a>
 
-        <a href="#">Terms</a>
+            <a href="#">Help</a>
 
-        <a href="#">Privacy</a>
-      </div>
+            <a href="#">Contact</a>
 
-      <p>Easy Stock Solutions</p>
+            <a href="#">Terms</a>
+
+            <a href="#">Privacy</a>
+
+        </div>
+
+        <p>
+            Easy Stock Solutions
+        </p>
+
     </footer>
 
+
     <script src="js/session.js"></script>
+
     <script src="js/portfolio.js"></script>
-  </body>
+
+
+</body>
+
 </html>

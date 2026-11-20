@@ -243,3 +243,29 @@
     }
 
 }
+/* ==========================================
+   Dynamic Portfolio Messages
+   ========================================== */
+
+.portfolio-message {
+    min-height: 24px;
+    margin-top: 16px;
+
+    color: #d5263b;
+
+    font-weight: 600;
+}
+
+
+.empty-holdings {
+    padding: 30px;
+
+    text-align: center;
+
+    color: var(--muted-color);
+}
+
+
+.summary-value.negative {
+    color: var(--negative-color);
+}

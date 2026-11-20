@@ -380,3 +380,21 @@
     }
 
 }
+/* ==========================================
+   Cash Messages
+   ========================================== */
+
+.cash-message {
+    min-height: 24px;
+    margin-top: 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.success-message {
+    color: #16823b;
+}
+
+.error-message {
+    color: #d5263b;
+}

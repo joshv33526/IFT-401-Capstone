@@ -1,17 +1,22 @@
-// Easy Stock Solutions - Cash Page
-// Front-end logic for viewing the current cash balance and depositing cash.
+// Easy Stock Solutions - Cash Management
+// Handles loading cash balance, deposits, and withdrawals.
 
 const depositForm = document.getElementById("depositForm");
 const depositAmount = document.getElementById("depositAmount");
 const depositMessage = document.getElementById("depositMessage");
 const depositButton = depositForm?.querySelector("button");
 
+const withdrawForm = document.getElementById("withdrawForm");
+const withdrawAmount = document.getElementById("withdrawAmount");
+const withdrawMessage = document.getElementById("withdrawMessage");
+const withdrawButton = withdrawForm?.querySelector("button");
+
 const topCashBalance = document.getElementById("topCashBalance");
 const summaryCashBalance = document.getElementById("summaryCashBalance");
 const buyingPower = document.getElementById("buyingPower");
+const cashPageMessage = document.getElementById("cashPageMessage");
 
 
-// Format numbers as U.S. currency
 function formatMoney(value) {
     return Number(value).toLocaleString("en-US", {
         style: "currency",
@@ -20,199 +25,232 @@ function formatMoney(value) {
 }
 
 
-// Update all of the cash balance displays on the page
 function updateBalance(balance) {
-
-    const formattedBalance = formatMoney(balance);
+    const formatted = formatMoney(balance);
 
     if (topCashBalance) {
-        topCashBalance.textContent = formattedBalance;
+        topCashBalance.textContent = formatted;
     }
 
     if (summaryCashBalance) {
-        summaryCashBalance.textContent = formattedBalance;
+        summaryCashBalance.textContent = formatted;
     }
 
     if (buyingPower) {
-        buyingPower.textContent = formattedBalance;
+        buyingPower.textContent = formatted;
+    }
+
+    // Helps prevent entering more than the current balance.
+    // The backend still performs the real insufficient-funds check.
+    if (withdrawAmount && Number(balance) > 0) {
+        withdrawAmount.max = Number(balance).toFixed(2);
     }
 }
 
 
-// Load the current user's cash balance
+function showMessage(element, message, success = false) {
+    if (!element) return;
+
+    element.textContent = message;
+    element.className = success
+        ? "cash-message success-message"
+        : "cash-message error-message";
+}
+
+
+function clearMessage(element) {
+    if (!element) return;
+
+    element.textContent = "";
+    element.className = "cash-message";
+}
+
+
 async function loadBalance() {
-
     try {
-
         const res = await fetch("/api/cash/balance");
 
-
-        // If user is not logged in, return to login page
         if (res.status === 401) {
-
             window.location.href = "login.html";
-
             return;
         }
 
-
         const data = await res.json().catch(() => ({}));
 
-
         if (!res.ok) {
-
             throw new Error(
                 data.error || "Unable to load cash balance."
             );
         }
 
-
-        // Update the page with the real balance
         updateBalance(data.balance);
 
+        if (cashPageMessage) {
+            cashPageMessage.textContent = "";
+        }
 
     } catch (error) {
-
-        if (depositMessage) {
-
-            depositMessage.textContent = error.message;
-
-            depositMessage.className =
-                "cash-message error-message";
-        }
+        showMessage(
+            cashPageMessage,
+            error.message || "Unable to load cash balance."
+        );
     }
 }
 
 
-// Deposit Cash
+// ------------------------------
+// Deposit
+// ------------------------------
+
 if (depositForm) {
-
     depositForm.addEventListener("submit", async (event) => {
-
-        // Prevent normal page reload
         event.preventDefault();
 
-
-        // Clear old messages
-        if (depositMessage) {
-
-            depositMessage.textContent = "";
-
-            depositMessage.className = "cash-message";
-        }
-
+        clearMessage(depositMessage);
 
         const amount = depositAmount.value.trim();
+        const numericAmount = Number(amount);
 
-
-        // Make sure amount is valid
-        if (!amount || Number(amount) < 0.01) {
-
-            if (depositMessage) {
-
-                depositMessage.textContent =
-                    "Enter a deposit amount of at least $0.01.";
-
-                depositMessage.className =
-                    "cash-message error-message";
-            }
-
+        if (
+            !amount ||
+            !Number.isFinite(numericAmount) ||
+            numericAmount < 0.01 ||
+            numericAmount > 1000000
+        ) {
+            showMessage(
+                depositMessage,
+                "Enter a deposit amount between $0.01 and $1,000,000."
+            );
             return;
         }
 
-
-        // Temporarily disable button
-        if (depositButton) {
-
-            depositButton.disabled = true;
-
-            depositButton.textContent = "Depositing...";
-        }
-
+        depositButton.disabled = true;
+        depositButton.textContent = "Depositing...";
 
         try {
-
-            // Send deposit request to backend
             const res = await fetch("/api/cash/deposit", {
-
                 method: "POST",
-
                 headers: {
                     "Content-Type": "application/json",
                 },
-
                 body: JSON.stringify({
                     amount: amount,
                 }),
             });
 
-
-            // User session expired
             if (res.status === 401) {
-
                 window.location.href = "login.html";
-
                 return;
             }
 
-
             const data = await res.json().catch(() => ({}));
 
-
-            // Deposit failed
             if (!res.ok) {
-
                 throw new Error(
                     data.error || "Deposit failed."
                 );
             }
 
-
-            // Update balance shown on page
             updateBalance(data.balance);
 
+            showMessage(
+                depositMessage,
+                `Deposit successful! ${formatMoney(data.amount)} was added to your account.`,
+                true
+            );
 
-            // Show successful deposit message
-            if (depositMessage) {
-
-                depositMessage.textContent =
-                    `Deposit successful! ${formatMoney(data.amount)} was added to your account.`;
-
-                depositMessage.className =
-                    "cash-message success-message";
-            }
-
-
-            // Clear deposit input
             depositForm.reset();
 
-
         } catch (error) {
-
-            if (depositMessage) {
-
-                depositMessage.textContent =
-                    error.message;
-
-                depositMessage.className =
-                    "cash-message error-message";
-            }
-
+            showMessage(
+                depositMessage,
+                error.message || "Deposit failed."
+            );
 
         } finally {
-
-            // Turn button back on
-            if (depositButton) {
-
-                depositButton.disabled = false;
-
-                depositButton.textContent =
-                    "Deposit Cash";
-            }
+            depositButton.disabled = false;
+            depositButton.textContent = "Deposit Cash";
         }
     });
 }
 
 
-// Load the real balance when the Cash page opens
+// ------------------------------
+// Withdraw
+// ------------------------------
+
+if (withdrawForm) {
+    withdrawForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        clearMessage(withdrawMessage);
+
+        const amount = withdrawAmount.value.trim();
+        const numericAmount = Number(amount);
+
+        if (
+            !amount ||
+            !Number.isFinite(numericAmount) ||
+            numericAmount < 0.01 ||
+            numericAmount > 1000000
+        ) {
+            showMessage(
+                withdrawMessage,
+                "Enter a withdrawal amount between $0.01 and $1,000,000."
+            );
+            return;
+        }
+
+        withdrawButton.disabled = true;
+        withdrawButton.textContent = "Withdrawing...";
+
+        try {
+            const res = await fetch("/api/cash/withdraw", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    amount: amount,
+                }),
+            });
+
+            if (res.status === 401) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                throw new Error(
+                    data.error || "Withdrawal failed."
+                );
+            }
+
+            updateBalance(data.balance);
+
+            showMessage(
+                withdrawMessage,
+                `Withdrawal successful! ${formatMoney(data.amount)} was removed from your account.`,
+                true
+            );
+
+            withdrawForm.reset();
+
+        } catch (error) {
+            showMessage(
+                withdrawMessage,
+                error.message || "Withdrawal failed."
+            );
+
+        } finally {
+            withdrawButton.disabled = false;
+            withdrawButton.textContent = "Withdraw Cash";
+        }
+    });
+}
+
+
+// Load real account balance when page opens.
 loadBalance();
